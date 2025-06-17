@@ -1,0 +1,2 @@
+coloredlogs>=15.0.1
+tqdm>=4.67.1

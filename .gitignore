@@ -1,0 +1,7 @@
+asteroid_output/
+trufflehog_output/
+__pycache__/
+.venv/
+.ruff_cache/
+uv.lock
+tests/

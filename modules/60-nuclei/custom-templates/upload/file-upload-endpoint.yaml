@@ -1,0 +1,29 @@
+id: file-upload-endpoint
+info:
+  name: File Upload Endpoint Detection
+  author: mchklt
+  severity: info
+  description: Detects endpoints with forms containing file upload fields by checking for form tags with method, input, and button elements.
+  tags: upload,http
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    redirects: true
+    max-redirects: 3
+    matchers-condition: and
+    matchers:
+      - type: regex
+        part: body
+        regex:
+          - "<form[^>]*method=[\"']?(post|POST|put|PUT)[\"']?[^>]*>"
+          - "<input[^>]*type=[\"']?file[\"']?[^>]*>"
+          - "<button[^>]*type=[\"']?submit[\"']?[^>]*>"
+        condition: or
+      - type: regex
+        part: body
+        regex:
+          - "type=[\"'](file)[\"']"
+          - "<button[^>]*type=[\"']?submit[\"']?[^>]*>"
+        condition: or

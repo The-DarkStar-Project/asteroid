@@ -1,0 +1,167 @@
+import argparse
+import subprocess
+import os
+import sys
+import shutil
+import time
+from typing import Optional
+
+# Add the parent directory to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from constants import DEFAULT_RATE_LIMIT, DEFAULT_MAX_FILESIZE
+from utils import logger, add_argument_if_not_exists, run_command
+from base_module import BaseModule
+
+
+class TrufflehogModule(BaseModule):
+    """A class to encapsulate Trufflehog functionality for finding secrets in files."""
+
+    name = "Trufflehog"
+    index = 40
+    is_default_module = False
+    description = "Runs Trufflehog for finding secrets in files."
+
+    def __init__(self, args):
+        """
+        Initializes the TrufflehogModule class with the given parameters.
+
+        :param args: The command line arguments passed to the script.
+        """
+        super().__init__(args)
+        self.rate_limit: Optional[str] = args.rate_limit
+        self.headers: Optional[str] = args.headers
+        self.proxy: Optional[str] = args.proxy
+        self.cleanup: Optional[bool] = args.cleanup
+
+        self.output_file: str = f"{args.output}/trufflehog.txt"
+
+    def has_run_before(self) -> bool:
+        """Checks if the module has run before by checking the existence of the output file."""
+        return os.path.exists(self.output_file)
+
+    def pre(self) -> bool:
+        """Checks if the necessary conditions are met before running the module."""
+        if not os.path.exists(self.urls_file):
+            logger.critical(f"URLs file {self.urls_file} does not exist")
+            return False
+
+        if not shutil.which("trufflehog"):
+            logger.critical(
+                "Trufflehog is not installed or not in PATH. Please install it before running."
+            )
+            return False
+
+        if not shutil.which("curl"):
+            logger.critical(
+                "Curl is not installed or not in PATH. Please install it before running."
+            )
+            return False
+
+        return True
+
+    def run(self):
+        """Runs Trufflehog with the provided arguments."""
+        # Ensure the output directory for Trufflehog exists
+        trufflehog_output_dir = os.path.join(self.output, "trufflehog_output")
+        if not os.path.exists(trufflehog_output_dir):
+            os.makedirs(trufflehog_output_dir)
+
+        # Download files using curl
+        with open(self.urls_file, "r") as f:
+            for url in f.readlines():
+                url = url.strip()
+                if url:
+                    filename = url.replace("/", "_").replace(":", "_")
+                    output_path = os.path.join(trufflehog_output_dir, filename)
+                    cmd_curl = [
+                        "curl",
+                        "-o",
+                        output_path,
+                        "-s",
+                        "--max-filesize",
+                        DEFAULT_MAX_FILESIZE,
+                        url,
+                    ]
+                    if self.headers:
+                        cmd_curl.extend(["-H", self.headers])
+                    if self.proxy:
+                        cmd_curl.extend(["-x", self.proxy])
+                    return_code = run_command(cmd_curl)
+                    if return_code == 63:
+                        logger.warning(
+                            f"File at {url} is too large to download (exceeds {DEFAULT_MAX_FILESIZE} bytes), only partial download may be available."
+                        )
+                    elif return_code != 0:
+                        logger.error(f"Failed to download {url}. Return code: {return_code}")
+                time.sleep(1 / int(self.rate_limit))  # Rate limit the requests
+
+        # Run Trufflehog on the downloaded files
+        cmd_trufflehog = [
+            "trufflehog",
+            "filesystem",
+            trufflehog_output_dir,
+        ]
+        with open(self.output_file, "w") as output_file:
+            run_command(cmd_trufflehog, stdout=output_file, stderr=subprocess.DEVNULL)
+
+        # Cleanup downloaded files if the cleanup flag is set
+        if self.cleanup:
+            logger.info("Cleaning up downloaded files...")
+            for file in os.listdir(trufflehog_output_dir):
+                os.remove(os.path.join(trufflehog_output_dir, file))
+
+        with open(self.output_file, "r") as f:
+            lines = f.readlines()
+            if lines:
+                logger.success("Trufflehog results:")
+                for line in lines:
+                    logger.info(line.strip())
+            else:
+                logger.info("No sensitive data found by Trufflehog.")
+
+    def post(self):
+        pass
+
+
+def add_arguments(parser):
+    group = parser.add_argument_group("trufflehog")
+    add_argument_if_not_exists(
+        group, "--cleanup", help="Cleanup the output directory", action="store_true"
+    )
+    add_argument_if_not_exists(
+        group,
+        "-rl",
+        "--rate-limit",
+        help="Maximum requests to send per second",
+        default=DEFAULT_RATE_LIMIT,
+    )
+    add_argument_if_not_exists(group, "-H", "--headers", help="Headers to use")
+    add_argument_if_not_exists(
+        group, "--proxy", help="HTTP/SOCKS5 proxy to use for the requests"
+    )
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Trufflehog Module")
+    parser.add_argument("target", help="The target domain")
+    parser.add_argument("-o", "--output", help="Output directory to save results")
+    add_arguments(parser)
+
+    args = parser.parse_args()
+
+    if not args.target:
+        logger.critical("No target specified. Please provide a target domain.")
+        sys.exit(1)
+
+    trufflehog_module = TrufflehogModule(args)
+    if not trufflehog_module.pre():
+        logger.critical("Preconditions not met. Exiting.")
+        sys.exit(1)
+
+    try:
+        trufflehog_module.run()
+        trufflehog_module.post()
+    except Exception as e:
+        logger.error(f"An error occurred: {e}")
+        sys.exit(1)
