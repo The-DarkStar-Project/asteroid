@@ -237,33 +237,32 @@ def asteroid():
             # Check if we should rerun any modules
             starting_index = check_rerun(args, modules_to_run)
 
-            with logging_redirect_tqdm():
-                logger.info(
-                    "[%s - Starting scan]", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-                )
-                for instance in tqdm(
-                    modules_to_run[starting_index:],
-                    desc="Modules",
-                    unit="module",
-                    colour="green",
-                ):
-                    try:
-                        logger.info(f"[{instance.index} - {instance.name}]")
-                        if not instance.pre():
-                            logger.warning(
-                                f"Skipping {instance.name} module due to precondition failure."
-                            )
-                        else:
-                            instance.run()
-                            instance.post()
-                    except KeyboardInterrupt:
+            logger.info(
+                "[%s - Starting scan]", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            )
+            for instance in tqdm(
+                modules_to_run[starting_index:],
+                desc="Modules",
+                unit="module",
+                colour="green",
+            ):
+                try:
+                    logger.info(f"[{instance.index} - {instance.name}]")
+                    if not instance.pre():
                         logger.warning(
-                            "Keyboard interrupt detected. Exiting.",
-                            extra={"output_to_file": False},
+                            f"Skipping {instance.name} module due to precondition failure."
                         )
-                        sys.exit(0)
-                    except Exception as e:
-                        logger.error(f"Error running {instance.name} module: {e}")
+                    else:
+                        instance.run()
+                        instance.post()
+                except KeyboardInterrupt:
+                    logger.warning(
+                        "Keyboard interrupt detected. Exiting.",
+                        extra={"output_to_file": False},
+                    )
+                    sys.exit(0)
+                except Exception as e:
+                    logger.error(f"Error running {instance.name} module: {e}")
 
 
 if __name__ == "__main__":
