@@ -52,9 +52,16 @@ class SensitiveFilesModule(BaseModule):
                 "Feroxbuster is not installed or not in PATH. Please install it before running."
             )
             return False
+    
         if not os.path.exists(self.directories_file):
             logger.critical(f"Directories file {self.directories_file} does not exist")
             return False
+        
+        if os.path.exists(self.output_file):
+            logger.warning(
+                f"Output file {self.output_file} already exists. We will overwrite it."
+            )
+            os.remove(self.output_file)
 
         return True
 
@@ -123,22 +130,18 @@ class SensitiveFilesModule(BaseModule):
                 logger.success(f"Found {len(sensitive_paths)} sensitive files:")
                 for path in sensitive_paths:
                     logger.info(path)
-
-                # Write the filtered results back to the output file
-                with open(self.output_file, "w") as f:
-                    f.write("\n".join(sensitive_paths))
-
-                # Merge the results into the URLs file
-                merge_list_with_file(sensitive_paths, self.urls_file, self.urls_file)
-                logger.info(
-                    f"Sensitive files successfully merged into {self.urls_file}"
-                )
             else:
                 logger.info("No sensitive files detected.")
+
+            # Merge the results into the URLs file
+            merge_list_with_file(sensitive_paths, self.urls_file, self.urls_file)
+            logger.info(
+                f"Sensitive files successfully merged into {self.urls_file}"
+            )
         except FileNotFoundError:
             logger.error(f"Output file {self.output_file} not found.")
         except Exception as e:
-            logger.error(f"An error occurred during post-processing: {e}")
+            logger.error(f"Error processing Feroxbuster output: {e}")
 
 
 def add_arguments(parser):
