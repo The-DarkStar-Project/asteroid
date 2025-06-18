@@ -355,13 +355,15 @@ class NucleiModule(BaseModule):
             reverse=True,
         )
 
-        logger.success("All nuclei results:")
-        with open(self.output_file, "w") as f:
-            for result in sorted_results:
-                line = f"[{result['type']}] [{result['severity']}] {result['url']} [{result['parameter']}] [{result['method']}]"
-                f.write(line + "\n")
-                logger.info(line)
-
+        if sorted_results:
+            logger.success("All nuclei results:")
+            with open(self.output_file, "w") as f:
+                for result in sorted_results:
+                    line = f"[{result['type']}] [{result['severity']}] {result['url']} [{result['parameter']}] [{result['method']}]"
+                    f.write(line + "\n")
+                    logger.info(line)
+        else:
+            logger.info("No Nuclei results found.")
 
 def add_arguments(parser):
     """Adds Nuclei-specific arguments to the main argument parser."""

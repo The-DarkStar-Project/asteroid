@@ -92,9 +92,12 @@ class ArjunModule(BaseModule):
         """Prints results and merges Arjun results with the URLs file."""
         with open(self.output_file, "r") as f:
             found_urls = [url.strip() for url in f.readlines()]
-            logger.success(f"Found {len(found_urls)} URLs with Arjun:")
-            for url in found_urls:
-                logger.info(url)
+            if found_urls:
+                logger.success(f"Found {len(found_urls)} URLs with Arjun:")
+                for url in found_urls:
+                    logger.info(url)
+            else:
+                logger.info("No URLs found with Arjun.")
 
         merge_files(self.output_file, self.urls_file, self.urls_file)
         logger.info(f"Arjun results merged with {self.urls_file}")
