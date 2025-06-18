@@ -136,7 +136,7 @@ def filter_false_positives(input_file, output_file, rate_limit=150):
         "-fc",
         "404,403",
         # "-fd", # Filtering duplicates did not work in testing
-        "-fr",
+        "-fhr",
         "-rl",
         str(rate_limit),
         # "-o",
