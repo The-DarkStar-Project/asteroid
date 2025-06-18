@@ -73,10 +73,8 @@ class GauModule(BaseModule):
         if self.proxy:
             cmd_gau.extend(["--proxy", self.proxy])
 
-        logger.debug(" ".join(cmd_gau))  # Print the command for debugging
-
         # Run the command using subprocess
-        run_command(cmd_gau, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        run_command(cmd_gau, verbose=self.verbose)
 
     def post(self):
         """Post-processing after running Gau."""

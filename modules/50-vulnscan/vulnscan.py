@@ -66,7 +66,7 @@ class VulnscanModule(BaseModule):
                 "-u",
             ]
             logger.info("Updating search_vulns database...")
-            run_command(cmd_search_vulns)
+            run_command(cmd_search_vulns, verbose=self.verbose)
 
         return True
 
@@ -81,7 +81,7 @@ class VulnscanModule(BaseModule):
             self.wappalyzer_output_file,
         ]
         logger.info("Running Wappalyzer...")
-        run_command(cmd_wappalyzer)
+        run_command(cmd_wappalyzer, verbose=self.verbose)
 
         # Load Wappalyzer results
         wappalyzer_results = {}
@@ -116,7 +116,6 @@ class VulnscanModule(BaseModule):
                         cpe = ":".join(cpe_split)
                         logger.debug(f"Found CPE: {cpe}")
             
-            logger.debug("Running search_vulns...")
             if cpe:
                 cmd_search_vulns = [
                     "python3",

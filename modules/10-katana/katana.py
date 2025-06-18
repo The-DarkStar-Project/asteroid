@@ -88,7 +88,7 @@ class KatanaModule(BaseModule):
         if self.proxy:
             cmd_katana.extend(["-proxy", self.proxy])
 
-        run_command(cmd_katana, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        run_command(cmd_katana, verbose=self.verbose)
 
         logger.success(f"Katana scan completed. Results saved to {self.output_file}")
 

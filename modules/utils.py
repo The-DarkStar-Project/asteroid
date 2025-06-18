@@ -187,21 +187,32 @@ def filter_false_positives(input_file, output_file, rate_limit=150):
         logger.critical(f"Error running uro and httpx: {e}")
         raise
 
-def run_command(command, capture_output=False, **kwargs):
+def run_command(command, verbose=False, capture_output=False, **kwargs):
     """Runs a shell command and returns the output."""
     logger.debug(f"Running command: {' '.join(command)}")
+    process = None
     try:
-        # Capture stdout and stderr
-        process = subprocess.run(
-            command, **kwargs, check=True, capture_output=capture_output, text=True
-        )
+        if verbose:
+            process = subprocess.run(
+                command, **kwargs, check=True, capture_output=capture_output, text=True
+            )
+        elif capture_output:
+            process = subprocess.run(
+                command, **kwargs, check=True, capture_output=capture_output, text=True
+            )
+        else:
+            process = subprocess.run(
+                command, **kwargs, check=True, text=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            )
     except subprocess.CalledProcessError as e:
+        logger.error(f"Command failed with error: {e}")
+        return e
+    except Exception as e:
         logger.error(f"Command failed with error: {e}")
     if capture_output:
         return process.stdout, process.stderr
     else:
-        return process.returncode
-
+        return process
 
 def match_urls_non_static(input_file, output_file):
     """Matches non-static URLs from the input file and saves them to the output file."""

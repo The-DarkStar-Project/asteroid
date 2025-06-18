@@ -86,7 +86,7 @@ class ArjunModule(BaseModule):
         if self.proxy:
             cmd_arjun.extend(["-oB", self.proxy])
 
-        run_command(cmd_arjun, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        run_command(cmd_arjun, verbose=self.verbose)
 
     def post(self):
         """Prints results and merges Arjun results with the URLs file."""

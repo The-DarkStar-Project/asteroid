@@ -16,7 +16,7 @@ from constants import (
     DEFAULT_FEROXBUSTER_FILTER_STATUS_CODES,
     DEFAULT_FEROXBUSTER_EXTENSIONS,
 )
-from utils import logger, add_argument_if_not_exists, merge_list_with_file
+from utils import logger, add_argument_if_not_exists, merge_list_with_file, run_command
 from base_module import BaseModule
 
 
@@ -158,14 +158,13 @@ class FeroxbusterModule(BaseModule):
 
         try:
             cat_proc = subprocess.Popen(cmd_cat, stdout=subprocess.PIPE, text=True)
-            subprocess.run(
+            run_command(
                 cmd_feroxbuster,
                 stdin=cat_proc.stdout,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-                text=True,
+                verbose=self.verbose,
             )
-            cat_proc.stdout.close()  # Allow `cat_proc` to receive a SIGPIPE if `feroxbuster_proc` exits
+            cat_proc.stdout.close()
+            cat_proc.wait()
         except Exception as e:
             logger.critical(f"Feroxbuster execution failed: {e}")
             raise

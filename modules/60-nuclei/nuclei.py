@@ -190,7 +190,7 @@ class NucleiModule(BaseModule):
         if self.proxy:
             cmd_nuclei_urls.extend(["-proxy", self.proxy])
         run_command(
-            cmd_nuclei_urls, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            cmd_nuclei_urls, verbose=self.verbose
         )
 
         if self.run_on_forms:
@@ -214,7 +214,7 @@ class NucleiModule(BaseModule):
             if self.proxy:
                 cmd_nuclei_forms.extend(["-proxy", self.proxy])
             run_command(
-                cmd_nuclei_forms, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+                cmd_nuclei_forms, verbose=self.verbose
             )
 
         logger.info("Running Nuclei SSL checks...")
@@ -234,7 +234,7 @@ class NucleiModule(BaseModule):
         if self.proxy:
             cmd_nuclei_ssl.extend(["-proxy", self.proxy])
         run_command(
-            cmd_nuclei_ssl, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            cmd_nuclei_ssl, verbose=self.verbose
         )
 
         logger.info("Checking for missing security headers...")
@@ -254,7 +254,7 @@ class NucleiModule(BaseModule):
         if self.proxy:
             cmd_nuclei_headers.extend(["-proxy", self.proxy])
         run_command(
-            cmd_nuclei_headers, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            cmd_nuclei_headers, verbose=self.verbose
         )
 
         logger.info("Checking cookies...")
@@ -279,7 +279,7 @@ class NucleiModule(BaseModule):
         if self.proxy:
             cmd_nuclei_cookies.extend(["-proxy", self.proxy])
         run_command(
-            cmd_nuclei_cookies, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            cmd_nuclei_cookies, verbose=self.verbose
         )
 
         logger.info("Looking for file uploads...")
@@ -300,9 +300,7 @@ class NucleiModule(BaseModule):
         if self.proxy:
             cmd_nuclei_file_uploads.extend(["-proxy", self.proxy])
         run_command(
-            cmd_nuclei_file_uploads,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            cmd_nuclei_file_uploads, verbose=self.verbose
         )
 
     def post(self):

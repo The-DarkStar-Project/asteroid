@@ -34,6 +34,8 @@ class BaseModule(ABC):
         if not self.output:
             self.output = os.path.join(OUTPUT_DIR, urlparse(self.target).netloc)
 
+        self.verbose = args.verbose
+
         self.target_name = urlparse(self.target).netloc
         self.script_dir = os.path.dirname(
             sys.modules[self.__class__.__module__].__file__

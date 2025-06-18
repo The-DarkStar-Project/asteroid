@@ -87,7 +87,14 @@ class TrufflehogModule(BaseModule):
                         cmd_curl.extend(["-H", self.headers])
                     if self.proxy:
                         cmd_curl.extend(["-x", self.proxy])
-                    return_code = run_command(cmd_curl)
+                    
+                    curl_proc = run_command(cmd_curl, verbose=self.verbose)
+                    
+                    if curl_proc:
+                        return_code = curl_proc.returncode
+                    else:
+                        return_code = 1
+                    
                     if return_code == 63:
                         logger.warning(
                             f"File at {url} is too large to download (exceeds {DEFAULT_MAX_FILESIZE} bytes), only partial download may be available."
@@ -103,7 +110,7 @@ class TrufflehogModule(BaseModule):
             trufflehog_output_dir,
         ]
         with open(self.output_file, "w") as output_file:
-            run_command(cmd_trufflehog, stdout=output_file, stderr=subprocess.DEVNULL)
+            run_command(cmd_trufflehog, verbose=self.verbose, stdout=output_file)
 
         # Cleanup downloaded files if the cleanup flag is set
         if self.cleanup:
