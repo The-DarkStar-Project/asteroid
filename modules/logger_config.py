@@ -12,33 +12,6 @@ from constants import OUTPUT_DIR
 logging.SUCCESS = 25  # between WARNING and INFO
 logging.addLevelName(logging.SUCCESS, "SUCCESS")
 
-
-class LogFormatter(logging.Formatter):
-    """Custom log formatter with color-coded log levels."""
-
-    grey = "\x1b[38;20m"
-    green = "\x1b[32;20m"
-    yellow = "\x1b[33;20m"
-    red = "\x1b[31;20m"
-    bold_red = "\x1b[31;1m"
-    reset = "\x1b[0m"
-    msg = "%(message)s"
-
-    FORMATS = {
-        logging.DEBUG: grey + msg + reset,
-        logging.INFO: grey + msg + reset,
-        logging.SUCCESS: green + msg + reset,
-        logging.WARNING: yellow + msg + reset,
-        logging.ERROR: red + msg + reset,
-        logging.CRITICAL: bold_red + msg + reset,
-    }
-
-    def format(self, record):
-        log_fmt = self.FORMATS.get(record.levelno)
-        formatter = logging.Formatter(log_fmt, datefmt="%Y-%m-%d %H:%M:%S")
-        return formatter.format(record)
-
-
 class OutputToFileFilter(logging.Filter):
     def __init__(self, output_to_file=True):
         super().__init__()
@@ -71,24 +44,6 @@ def get_logger(name, outputdir=OUTPUT_DIR, level="INFO"):
     coloredlogs.install(level=level, fmt="%(message)s")
 
     return logger
-
-
-# def set_outputdir(logger, outputdir):
-#     """
-#     Sets the output directory for the logger.
-
-#     Args:
-#         logger (logging.Logger): Logger instance.
-#         outputdir (str): Output directory to set.
-#     """
-#     if not os.path.exists(outputdir):
-#         os.makedirs(outputdir)
-
-#     for handler in logger.handlers:
-#         if isinstance(handler, logging.FileHandler):
-#             handler.baseFilename = os.path.join(outputdir, "results.txt")
-#             handler.stream = open(handler.baseFilename, 'a')
-
 
 def set_logger(logger, outputdir=OUTPUT_DIR, level="INFO"):
     """
