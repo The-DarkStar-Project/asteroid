@@ -1,7 +1,9 @@
 # Asteroid - Web Application Security Scanner
+Asteroid is a web application security scanner that combines multiple open source tools to gather URLs and detect vulnerabilities. It uses a modular structure to separate functionality for each tool.
+
 Developed during an internship at [SURF](https://www.surf.nl/).
 
-Asteroid is a web application security scanner that combines multiple open source tools to gather URLs and detect vulnerabilities. It uses a modular structure to separate functionality for each tool.
+**Disclaimer**: Do not run Asteroid on a website without explicit permission of the owner.
 
 ## Features
 | Module     | Default      | Comment |
