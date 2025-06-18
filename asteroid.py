@@ -16,7 +16,7 @@ from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 import time
 
-from modules.constants import OUTPUT_DIR
+from modules.constants import OUTPUT_DIR, DEFAULT_RATE_LIMIT
 from modules.logger_config import set_logger
 from modules.utils import logger
 
@@ -159,6 +159,12 @@ def asteroid():
     )
     parser.add_argument(
         "-v", "--verbose", help="Enable verbose output", action="store_true"
+    )
+    parser.add_argument(
+        "-rl",
+        "--rate-limit",
+        help="Maximum requests to send per second",
+        default=DEFAULT_RATE_LIMIT,
     )
 
     arguments_without_help = (

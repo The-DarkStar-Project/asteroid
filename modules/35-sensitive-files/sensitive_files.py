@@ -145,13 +145,6 @@ def add_arguments(parser):
     group = parser.add_argument_group("sensitive files")
     add_argument_if_not_exists(
         group,
-        "-rl",
-        "--rate-limit",
-        help="Maximum requests to send per second",
-        default=DEFAULT_RATE_LIMIT,
-    )
-    add_argument_if_not_exists(
-        group,
         "-tl",
         "--time-limit",
         help="Time limit for the feroxbuster",
@@ -180,6 +173,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Sensitive Files Module")
     parser.add_argument("target", help="The target domain")
     parser.add_argument("-o", "--output", help="Output directory to save results")
+    parser.add_argument(
+        "-rl",
+        "--rate-limit",
+        help="Maximum requests to send per second",
+        default=DEFAULT_RATE_LIMIT,
+    )
     add_arguments(parser)
     args = parser.parse_args()
 

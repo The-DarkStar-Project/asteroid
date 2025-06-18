@@ -102,19 +102,18 @@ def add_arguments(parser):
     add_argument_if_not_exists(
         group, "--proxy", help="HTTP/SOCKS5 proxy to use for the requests"
     )
-    add_argument_if_not_exists(
-        group,
-        "-rl",
-        "--rate-limit",
-        help="Maximum requests to send per second",
-        default=DEFAULT_RATE_LIMIT,
-    )
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Gau Module")
     parser.add_argument("target", help="The target domain")
     parser.add_argument("-o", "--output", help="Output directory to save results")
+    parser.add_argument(
+        "-rl",
+        "--rate-limit",
+        help="Maximum requests to send per second",
+        default=DEFAULT_RATE_LIMIT,
+    )
     add_arguments(parser)
 
     args = parser.parse_args()

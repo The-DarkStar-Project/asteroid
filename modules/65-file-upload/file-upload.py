@@ -19,6 +19,7 @@ from bs4 import BeautifulSoup as bs
 # Add the parent directory to sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from constants import DEFAULT_RATE_LIMIT
 from utils import logger, add_argument_if_not_exists, random_string
 from base_module import BaseModule
 
@@ -364,13 +365,6 @@ class FileUploadModule(BaseModule):
 
 def add_arguments(parser):
     group = parser.add_argument_group("file-upload")
-    add_argument_if_not_exists(
-        group,
-        "-rl",
-        "--rate-limit",
-        help="Maximum requests to send per second",
-        default="150",
-    )
     add_argument_if_not_exists(group, "-H", "--headers", help="Headers to use")
     add_argument_if_not_exists(group, "--proxy", help="Proxy to use")
 
@@ -379,6 +373,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="File Upload Module")
     parser.add_argument("target", help="The target domain")
     parser.add_argument("-o", "--output", help="Output directory to save results")
+    parser.add_argument(
+        "-rl",
+        "--rate-limit",
+        help="Maximum requests to send per second",
+        default=DEFAULT_RATE_LIMIT,
+    )
     add_arguments(parser)
 
     args = parser.parse_args()
