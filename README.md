@@ -10,7 +10,7 @@ Developed during an internship at [SURF](https://www.surf.nl/).
 | ------------- | ------------- | ------------- |
 | [Katana](https://github.com/projectdiscovery/katana) | ✅ | Uses Katana to crawl the target domain, extracts forms to use with Nuclei |
 | [Feroxbuster](https://github.com/epi052/feroxbuster) | ✅ | Runs Feroxbuster for URL bruteforcing using [raft-small-words.txt](https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/raft-small-words.txt) |
-| [Gau](https://github.com/lc/gau) | ✅ | Runs Gau to collect URLs from AlienVault's Open Threat Exchange, the Wayback Machine, and Common Crawl and filters false positives with [httpx](https://github.com/projectdiscovery/httpx) |
+| [Gau](https://github.com/lc/gau) | ✅ | Runs Gau to collect URLs from AlienVault's Open Threat Exchange, the Wayback Machine, and Common Crawl |
 | [Arjun](https://github.com/s0md3v/Arjun) | ❌ | Fuzzes for GET query parameters with Arjun |
 | Directory Listing | ✅ | Scans Feroxbuster output for open directory listings | 
 | Sensitive Files | ✅ | Runs Feroxbuster with a dangerous files wordlist from [Bo0oM](https://github.com/Bo0oM/fuzz.txt) |
@@ -21,6 +21,7 @@ Developed during an internship at [SURF](https://www.surf.nl/).
 | [Nuclei](https://github.com/projectdiscovery/nuclei) | ✅ | Fuzzes for vulnerabilities like XSS and SQLi in URLs and forms using Nuclei DAST templates | 
 | File Upload | ✅ | Detects vulnerable file uploads. Custom tool and work-in-progress |
 
+False positives and duplicate URLs are filtered using [httpx](https://github.com/projectdiscovery/httpx) and [uro](https://github.com/s0md3v/uro).
 ## Installation
 ### Docker
 Build with docker (takes ~8 min):
