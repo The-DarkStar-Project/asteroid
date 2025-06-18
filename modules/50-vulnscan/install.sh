@@ -6,5 +6,6 @@ apt install -y firefox-esr sudo git
 uv tool install wappalyzer
 uv pip install -r "$SCRIPT_DIR/requirements.txt"
 
+cd "$SCRIPT_DIR/search_vulns/"
 git submodule update --init --recursive
-bash "$SCRIPT_DIR/search_vulns/install.sh"
+bash install.sh
