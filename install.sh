@@ -12,7 +12,7 @@ dashes
 export PATH="$HOME/.local/bin:$HOME/go/bin:$PATH"
 echo 'export PATH="$HOME/.local/bin:$HOME/go/bin:$PATH"' >> $HOME/.bashrc
 
-apt update && apt install -y python3 golang curl git # python3-pip pypy3-venv
+apt update && apt install -y python3 golang curl # python3-pip pypy3-venv
 # UV
 curl -LsSf https://astral.sh/uv/install.sh | sh
 uv venv
