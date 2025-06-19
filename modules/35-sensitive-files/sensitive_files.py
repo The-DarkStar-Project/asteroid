@@ -37,7 +37,8 @@ class SensitiveFilesModule(BaseModule):
         self.time_limit: Optional[str] = args.time_limit
         self.headers: Optional[str] = args.headers
         self.proxy: Optional[str] = args.proxy
-        self.wordlist: str = args.wordlist
+        self.sensitive_files_wordlist: str = args.sensitive_files_wordlist
+        self.dont_scan: Optional[str] = args.dont_scan
 
         self.output_file: str = f"{args.output}/sensitive-files.txt"
 
@@ -52,11 +53,11 @@ class SensitiveFilesModule(BaseModule):
                 "Feroxbuster is not installed or not in PATH. Please install it before running."
             )
             return False
-    
+
         if not os.path.exists(self.directories_file):
             logger.critical(f"Directories file {self.directories_file} does not exist")
             return False
-        
+
         if os.path.exists(self.output_file):
             logger.warning(
                 f"Output file {self.output_file} already exists. We will overwrite it."
@@ -73,7 +74,7 @@ class SensitiveFilesModule(BaseModule):
             "--stdin",
             "--silent",
             "-w",
-            self.wordlist,
+            self.sensitive_files_wordlist,
             "--collect-backups",
             "--collect-extensions",
             "--dont-extract-links",
@@ -89,7 +90,7 @@ class SensitiveFilesModule(BaseModule):
             "--rate-limit",
             self.rate_limit,  # Replace with args.rate_limit if needed
             "--dont-scan",
-            ".*(logout|uitloggen).*",
+            self.dont_scan,
         ]
 
         # Add optional headers and proxy
@@ -135,9 +136,7 @@ class SensitiveFilesModule(BaseModule):
 
             # Merge the results into the URLs file
             merge_list_with_file(sensitive_paths, self.urls_file, self.urls_file)
-            logger.info(
-                f"Sensitive files successfully merged into {self.urls_file}"
-            )
+            logger.info(f"Sensitive files successfully merged into {self.urls_file}")
         except FileNotFoundError:
             logger.error(f"Output file {self.output_file} not found.")
         except Exception as e:
@@ -165,10 +164,16 @@ def add_arguments(parser):
     )
     add_argument_if_not_exists(
         group,
-        "-w",
-        "--wordlist",
-        help="Wordlist to use for feroxbuster",
+        "-sfw",
+        "--sensitive-files-wordlist",
+        help="Wordlist to use for Feroxbuster sensitive files scan",
         default=DEFAULT_SENSITIVE_FILES_WORDLIST,
+    )
+    add_argument_if_not_exists(
+        group,
+        "--dont-scan",
+        help="Do not scan URLs matching this regex",
+        default=".*(logout|uitloggen).*",
     )
 
 

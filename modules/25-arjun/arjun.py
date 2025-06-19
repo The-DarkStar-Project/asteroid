@@ -2,7 +2,6 @@ import argparse
 import os
 import sys
 import shutil
-import subprocess
 from typing import Optional
 
 # Add the parent directory to sys.path

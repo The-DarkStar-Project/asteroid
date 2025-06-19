@@ -110,6 +110,7 @@ def check_rerun(args, modules_to_run):
                 return 0
     return 0
 
+
 def check_target_rerun(args, list_of_targets, output_dir=OUTPUT_DIR):
     # Check if any target has been scanned before
     if args.rerun:
@@ -139,7 +140,11 @@ def asteroid():
         prog="asteroid",
         description="Runs all Asteroid Web Application Security Scanner modules.",
     )
-    parser.add_argument("target", help="The target domain to crawl, or a file containing domains", nargs="?")
+    parser.add_argument(
+        "target",
+        help="The target domain to crawl, or a file containing domains",
+        nargs="?",
+    )
     parser.add_argument("-o", "--output", help="Output directory to save results")
     parser.add_argument("--modules", help="Comma-separated list of modules to run")
     parser.add_argument(
@@ -238,7 +243,8 @@ def asteroid():
             starting_index = check_rerun(args, modules_to_run)
 
             logger.info(
-                "[%s - Starting scan]", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                "[%s - Starting scan]",
+                time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
             )
             for instance in tqdm(
                 modules_to_run[starting_index:],

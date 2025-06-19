@@ -1,5 +1,4 @@
 import argparse
-import subprocess
 import os
 from urllib.parse import urlparse
 import sys
@@ -189,9 +188,7 @@ class NucleiModule(BaseModule):
             cmd_nuclei_urls.extend(["-H", self.headers])
         if self.proxy:
             cmd_nuclei_urls.extend(["-proxy", self.proxy])
-        run_command(
-            cmd_nuclei_urls, verbose=self.verbose
-        )
+        run_command(cmd_nuclei_urls, verbose=self.verbose)
 
         if self.run_on_forms:
             logger.info("Running Nuclei on forms...")
@@ -213,9 +210,7 @@ class NucleiModule(BaseModule):
                 cmd_nuclei_forms.extend(["-H", self.headers])
             if self.proxy:
                 cmd_nuclei_forms.extend(["-proxy", self.proxy])
-            run_command(
-                cmd_nuclei_forms, verbose=self.verbose
-            )
+            run_command(cmd_nuclei_forms, verbose=self.verbose)
 
         logger.info("Running Nuclei SSL checks...")
         cmd_nuclei_ssl = [
@@ -233,9 +228,7 @@ class NucleiModule(BaseModule):
             cmd_nuclei_ssl.extend(["-H", self.headers])
         if self.proxy:
             cmd_nuclei_ssl.extend(["-proxy", self.proxy])
-        run_command(
-            cmd_nuclei_ssl, verbose=self.verbose
-        )
+        run_command(cmd_nuclei_ssl, verbose=self.verbose)
 
         logger.info("Checking for missing security headers...")
         cmd_nuclei_headers = [
@@ -253,9 +246,7 @@ class NucleiModule(BaseModule):
             cmd_nuclei_headers.extend(["-H", self.headers])
         if self.proxy:
             cmd_nuclei_headers.extend(["-proxy", self.proxy])
-        run_command(
-            cmd_nuclei_headers, verbose=self.verbose
-        )
+        run_command(cmd_nuclei_headers, verbose=self.verbose)
 
         logger.info("Checking cookies...")
         cmd_nuclei_cookies = [
@@ -278,9 +269,7 @@ class NucleiModule(BaseModule):
         #     cmd_nuclei_cookies.extend(["-H", self.headers])
         if self.proxy:
             cmd_nuclei_cookies.extend(["-proxy", self.proxy])
-        run_command(
-            cmd_nuclei_cookies, verbose=self.verbose
-        )
+        run_command(cmd_nuclei_cookies, verbose=self.verbose)
 
         logger.info("Looking for file uploads...")
         cmd_nuclei_file_uploads = [
@@ -299,9 +288,7 @@ class NucleiModule(BaseModule):
             cmd_nuclei_file_uploads.extend(["-H", self.headers])
         if self.proxy:
             cmd_nuclei_file_uploads.extend(["-proxy", self.proxy])
-        run_command(
-            cmd_nuclei_file_uploads, verbose=self.verbose
-        )
+        run_command(cmd_nuclei_file_uploads, verbose=self.verbose)
 
     def post(self):
         """Merge all Nuclei results into a single file and sort them."""
@@ -362,6 +349,7 @@ class NucleiModule(BaseModule):
                     logger.info(line)
         else:
             logger.info("No Nuclei results found.")
+
 
 def add_arguments(parser):
     """Adds Nuclei-specific arguments to the main argument parser."""

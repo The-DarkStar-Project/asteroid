@@ -3,7 +3,6 @@ import json
 import os
 import sys
 import shutil
-import subprocess
 from typing import Optional
 
 # Add the parent directory to sys.path
@@ -115,7 +114,7 @@ class VulnscanModule(BaseModule):
                         )
                         cpe = ":".join(cpe_split)
                         logger.debug(f"Found CPE: {cpe}")
-            
+
             if cpe:
                 cmd_search_vulns = [
                     "python3",
@@ -137,9 +136,7 @@ class VulnscanModule(BaseModule):
                     "json",
                 ]
 
-            stdout, _ = run_command(
-                cmd_search_vulns, capture_output=True
-            )
+            stdout, _ = run_command(cmd_search_vulns, capture_output=True)
             found_vulns = False
             if stdout:
                 try:
@@ -164,11 +161,11 @@ class VulnscanModule(BaseModule):
                         logger.info(
                             f"{vuln.get('id')} - CVSS: {vuln.get('cvss')} - {vuln.get('published')} - {vuln.get('description')}"
                         )
-            
-            if not found_vulns:                     
+
+            if not found_vulns:
                 out += f"No vulnerabilities found for {tech}.\n"
                 logger.info(f"No vulnerabilities found for {tech}.")
-            
+
             logger.info("")
             out += "\n"
 

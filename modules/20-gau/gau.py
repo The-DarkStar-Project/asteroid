@@ -1,5 +1,4 @@
 import argparse
-import subprocess
 import os
 import sys
 import shutil
@@ -9,7 +8,13 @@ from typing import Optional
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from constants import DEFAULT_RATE_LIMIT
-from utils import logger, add_argument_if_not_exists, merge_files, run_command, filter_false_positives
+from utils import (
+    logger,
+    add_argument_if_not_exists,
+    merge_files,
+    run_command,
+    filter_false_positives,
+)
 from base_module import BaseModule
 
 
@@ -78,7 +83,9 @@ class GauModule(BaseModule):
 
     def post(self):
         """Post-processing after running Gau."""
-        filter_false_positives(self.output_file, self.output_filtered_file, rate_limit=self.rate_limit)
+        filter_false_positives(
+            self.output_file, self.output_filtered_file, rate_limit=self.rate_limit
+        )
 
         # Print filtered results
         with open(self.output_filtered_file, "r") as f:

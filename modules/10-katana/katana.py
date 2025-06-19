@@ -1,5 +1,4 @@
 import argparse
-import subprocess
 import os
 import json
 import sys
@@ -10,7 +9,13 @@ from typing import Optional
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from constants import DEFAULT_RATE_LIMIT, DEFAULT_TIME_LIMIT
-from utils import logger, add_argument_if_not_exists, merge_files, run_command, filter_false_positives
+from utils import (
+    logger,
+    add_argument_if_not_exists,
+    merge_files,
+    run_command,
+    filter_false_positives,
+)
 from base_module import BaseModule
 
 
@@ -108,18 +113,22 @@ class KatanaModule(BaseModule):
             logger.error(f"Error processing Katana output: {e}")
             raise
 
-        filter_false_positives(self.output_urls_file, self.output_filtered_file, rate_limit=self.rate_limit)
+        filter_false_positives(
+            self.output_urls_file, self.output_filtered_file, rate_limit=self.rate_limit
+        )
 
         # Print filtered results
         with open(self.output_filtered_file, "r") as f:
             filtered_urls = [url.strip() for url in f.readlines()]
             if filtered_urls:
-                logger.success(f"Found {len(filtered_urls)} (filtered) URLs with Katana:")
+                logger.success(
+                    f"Found {len(filtered_urls)} (filtered) URLs with Katana:"
+                )
                 for url in filtered_urls:
                     logger.info(url)
             else:
                 logger.info("No URLs found with Katana.")
-        
+
         merge_files(self.output_filtered_file, self.urls_file, self.urls_file)
 
 

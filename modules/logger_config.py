@@ -12,6 +12,7 @@ from constants import OUTPUT_DIR
 logging.SUCCESS = 25  # between WARNING and INFO
 logging.addLevelName(logging.SUCCESS, "SUCCESS")
 
+
 class OutputToFileFilter(logging.Filter):
     def __init__(self, output_to_file=True):
         super().__init__()
@@ -45,6 +46,7 @@ def get_logger(name, outputdir=OUTPUT_DIR, level="INFO"):
 
     return logger
 
+
 def set_logger(logger, outputdir=OUTPUT_DIR, level="INFO"):
     """
     Sets up the logger with a file handler and colored output.
@@ -63,7 +65,7 @@ def set_logger(logger, outputdir=OUTPUT_DIR, level="INFO"):
 
     while logger.handlers:
         logger.removeHandler(logger.handlers[0])
-    
+
     if outputdir:
         # File handler
         file_handler = logging.FileHandler(os.path.join(outputdir, "results.txt"))
@@ -76,4 +78,3 @@ def set_logger(logger, outputdir=OUTPUT_DIR, level="INFO"):
 
         # Add handlers to the logger
         logger.addHandler(file_handler)
-    

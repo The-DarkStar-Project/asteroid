@@ -60,6 +60,7 @@ static_extensions = [
     ".iso",
 ]
 
+
 def add_argument_if_not_exists(parser, *args, **kwargs):
     """Adds an argument to the parser only if it doesn't already exist."""
     for arg in args:
@@ -114,12 +115,13 @@ def merge_list_with_file(list_to_merge, file_to_merge, output_file):
     )
     process.communicate(input="\n".join(sorted(lines)))
 
+
 def filter_false_positives(input_file, output_file, rate_limit=150):
     """Filters out duplicates and false positives from the input file using uro and httpx."""
     if not os.path.exists(input_file):
         logger.critical(f"Input file {input_file} does not exist.")
         return
-    
+
     if input_file == output_file:
         logger.critical("Input and output files cannot be the same.")
         return
@@ -147,16 +149,10 @@ def filter_false_positives(input_file, output_file, rate_limit=150):
         # Run `uro` and pipe its output to `httpx`
         uro_cmd = ["uro", "-i", input_file]
         uro_proc = subprocess.Popen(
-            uro_cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
-            text=True
+            uro_cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True
         )
         httpx_output = subprocess.run(
-            httpx_cmd,
-            stdin=uro_proc.stdout,
-            capture_output=True,
-            text=True
+            httpx_cmd, stdin=uro_proc.stdout, capture_output=True, text=True
         )
         # Pipe output into jq
         # jq_output = subprocess.run(
@@ -179,13 +175,14 @@ def filter_false_positives(input_file, output_file, rate_limit=150):
                 formatted_urls.append(stripped_second_url)
             else:
                 formatted_urls.append(url)
-        
+
         with open(output_file, "w") as f:
             f.write("\n".join(formatted_urls))
 
     except Exception as e:
         logger.critical(f"Error running uro and httpx: {e}")
         raise
+
 
 def run_command(command, verbose=False, capture_output=False, **kwargs):
     """Runs a shell command and returns the output."""
@@ -202,7 +199,12 @@ def run_command(command, verbose=False, capture_output=False, **kwargs):
             )
         else:
             process = subprocess.run(
-                command, **kwargs, check=True, text=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+                command,
+                **kwargs,
+                check=True,
+                text=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
             )
     except subprocess.CalledProcessError as e:
         logger.error(f"Command failed with error: {e}")
@@ -213,6 +215,7 @@ def run_command(command, verbose=False, capture_output=False, **kwargs):
         return process.stdout, process.stderr
     else:
         return process
+
 
 def match_urls_non_static(input_file, output_file):
     """Matches non-static URLs from the input file and saves them to the output file."""
@@ -251,12 +254,15 @@ def match_urls_with_params(input_file, output_file):
         for url in urls
         if not any(url.strip().split("?")[0].endswith(ext) for ext in static_extensions)
     ]
-    urls_with_params = [url.strip() for url in non_static_urls if "?" in url or "=" in url]
+    urls_with_params = [
+        url.strip() for url in non_static_urls if "?" in url or "=" in url
+    ]
 
     with open(output_file, "w") as f:
         f.writelines("\n".join(urls_with_params))
 
     logger.info(f"Found URLs with parameters saved to {output_file}")
+
 
 def random_string(length=10):
     """Generates a random string of fixed length consisting of letters"""

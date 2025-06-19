@@ -1,5 +1,4 @@
 import argparse
-import subprocess
 import os
 import sys
 import shutil
@@ -87,20 +86,22 @@ class TrufflehogModule(BaseModule):
                         cmd_curl.extend(["-H", self.headers])
                     if self.proxy:
                         cmd_curl.extend(["-x", self.proxy])
-                    
+
                     curl_proc = run_command(cmd_curl, verbose=self.verbose)
-                    
+
                     if curl_proc:
                         return_code = curl_proc.returncode
                     else:
                         return_code = 1
-                    
+
                     if return_code == 63:
                         logger.warning(
                             f"File at {url} is too large to download (exceeds {DEFAULT_MAX_FILESIZE} bytes), only partial download may be available."
                         )
                     elif return_code != 0:
-                        logger.error(f"Failed to download {url}. Return code: {return_code}")
+                        logger.error(
+                            f"Failed to download {url}. Return code: {return_code}"
+                        )
                 time.sleep(1 / int(self.rate_limit))  # Rate limit the requests
 
         # Run Trufflehog on the downloaded files

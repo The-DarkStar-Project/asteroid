@@ -60,11 +60,11 @@ class RetireJSModule(BaseModule):
                     if content != r.text:
                         update = True
                     else:
-                        logger.info("JavaScript repository file is up to date.")                    
+                        logger.info("JavaScript repository file is up to date.")
             except requests.RequestException as e:
                 logger.error(f"Failed to fetch update URL: {e}")
                 return False
-        
+
         if update:
             with open(self.js_repository_path, "w") as f:
                 logger.info("JavaScript repository file is outdated. Updating...")
