@@ -163,9 +163,8 @@ class NucleiModule(BaseModule):
             )
             self.convert_to_xml(self.katana_output_file, self.forms_output_file)
 
-        if not os.path.exists(self.urls_with_params):
-            # Filter out non-dynamic URLs from the URLs file
-            match_urls_with_params(self.urls_file, self.urls_with_params)
+        # Filter out non-dynamic URLs from the URLs file
+        match_urls_with_params(self.urls_file, self.urls_with_params)
 
         return True
 
