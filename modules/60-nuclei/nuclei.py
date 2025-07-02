@@ -36,9 +36,9 @@ class NucleiModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.rate_limit: Optional[str] = args['rate_limit']
-        self.headers: Optional[str] = args['headers']
-        self.proxy: Optional[str] = args['proxy']
+        self.rate_limit: Optional[str] = args["rate_limit"]
+        self.headers: Optional[str] = args["headers"]
+        self.proxy: Optional[str] = args["proxy"]
 
         self.run_on_forms: bool = True
 
@@ -53,7 +53,9 @@ class NucleiModule(BaseModule):
         self.output_file_ssl: str = f"{self.output_dir}/nuclei-ssl.txt"
         self.output_file_headers: str = f"{self.output_dir}/nuclei-headers.txt"
         self.output_file_cookies: str = f"{self.output_dir}/nuclei-cookies.txt"
-        self.output_file_file_uploads: str = f"{self.output_dir}/nuclei-file-uploads.txt"
+        self.output_file_file_uploads: str = (
+            f"{self.output_dir}/nuclei-file-uploads.txt"
+        )
 
     def has_run_before(self) -> bool:
         """Checks if the module has run before by checking the existence of the output file."""

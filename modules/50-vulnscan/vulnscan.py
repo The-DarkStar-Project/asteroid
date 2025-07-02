@@ -27,8 +27,8 @@ class VulnscanModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.size: Optional[str] = args['size']
-        self.update = args['update']
+        self.size: Optional[str] = args["size"]
+        self.update = args["update"]
 
         self.output_file: str = f"{self.output_dir}/vulnscan.txt"
         self.wappalyzer_output_file: str = f"{self.output_dir}/wappalyzer.json"

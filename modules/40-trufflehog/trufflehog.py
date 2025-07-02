@@ -28,10 +28,10 @@ class TrufflehogModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.rate_limit: Optional[str] = args['rate_limit']
-        self.headers: Optional[str] = args['headers']
-        self.proxy: Optional[str] = args['proxy']
-        self.cleanup: Optional[bool] = args['cleanup']
+        self.rate_limit: Optional[str] = args["rate_limit"]
+        self.headers: Optional[str] = args["headers"]
+        self.proxy: Optional[str] = args["proxy"]
+        self.cleanup: Optional[bool] = args["cleanup"]
 
         self.output_file: str = f"{self.output_dir}/trufflehog.txt"
 

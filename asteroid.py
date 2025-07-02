@@ -22,7 +22,19 @@ from modules.utils import logger
 
 
 class Asteroid:
-    def __init__(self, target, output_dir=OUTPUT_DIR, specific_modules="default", skip_modules=None, list_modules=False, rerun=False, cont=False, verbose=False, rate_limit=DEFAULT_RATE_LIMIT, module_args={}):
+    def __init__(
+        self,
+        target,
+        output_dir=OUTPUT_DIR,
+        specific_modules="default",
+        skip_modules=None,
+        list_modules=False,
+        rerun=False,
+        cont=False,
+        verbose=False,
+        rate_limit=DEFAULT_RATE_LIMIT,
+        module_args={},
+    ):
         """
         Initializes the Asteroid scanner with the general arguments and loads modules.
         """
@@ -46,10 +58,9 @@ class Asteroid:
         self.cont = cont
         self.verbose = verbose
         self.rate_limit = rate_limit
-        
+
         # Other arguments are copied to modules_args in _load_module_instances
         self.modules_args = module_args
-        
 
         # Load modules from the specified folder
         modules_folder = os.path.join(os.path.dirname(__file__), "modules")
@@ -58,14 +69,18 @@ class Asteroid:
     def _load_modules(self, modules_folder):
         """Dynamically loads all modules in the specified folder and its subfolders."""
         modules = []
-        for root, _, files in os.walk(modules_folder):  # Recursively traverse directories
+        for root, _, files in os.walk(
+            modules_folder
+        ):  # Recursively traverse directories
             # Limit traversal to the modules folder and one subdirectory below it
             if os.path.relpath(root, modules_folder).count(os.sep) >= 1:
                 continue
 
             for filename in files:
                 if filename.endswith(".py") and not filename.startswith("__"):
-                    relative_path = os.path.relpath(root, os.path.dirname(modules_folder))
+                    relative_path = os.path.relpath(
+                        root, os.path.dirname(modules_folder)
+                    )
                     package_path = ".".join(relative_path.split(os.sep))
                     module_name = filename[:-3]  # Remove .py extension
                     full_module_name = (
@@ -82,13 +97,12 @@ class Asteroid:
                         logger.error(f"Error loading module {full_module_name}: {e}")
         return modules
 
-
     def _load_module_instances(self, modules):
         """Loads and sorts module instances."""
 
         # Copy all attributes from the instance to modules_args
-        for (arg, value) in vars(self).items():
-            if arg not in self.modules_args and arg != 'modules_args':
+        for arg, value in vars(self).items():
+            if arg not in self.modules_args and arg != "modules_args":
                 self.modules_args[arg] = value
 
         instances = []
@@ -104,19 +118,22 @@ class Asteroid:
                         instances.append(module_class(self.modules_args))
         return sorted(instances, key=lambda x: x.index)
 
-
     def _select_modules(self, instances):
         if self.list_modules:
             logger.info("Available modules:")
             for instance in instances:
-                logger.info(f"{instance.index}: {instance.name} - {instance.description}")
+                logger.info(
+                    f"{instance.index}: {instance.name} - {instance.description}"
+                )
             sys.exit(0)
 
         if self.specific_modules:
             if self.specific_modules.modules.lower() == "all":
                 return instances
             selected = self.specific_modules.modules.lower().split(",")
-            return [instance for instance in instances if instance.name.lower() in selected]
+            return [
+                instance for instance in instances if instance.name.lower() in selected
+            ]
 
         if self.skip_modules:
             skipped = self.skip_modules.lower().split(",")
@@ -127,7 +144,6 @@ class Asteroid:
             ]
 
         return [instance for instance in instances if instance.is_default_module]
-
 
     def _check_rerun(self, modules_to_run):
         # Check if any module has been run before
@@ -149,7 +165,6 @@ class Asteroid:
                 if answer.startswith("a"):
                     return 0
         return 0
-
 
     def _check_target_rerun(self):
         # Check if any target has been scanned before
@@ -184,10 +199,9 @@ class Asteroid:
         # Parse the arguments with the added module arguments
         parsed_args = vars(parser.parse_args())
         # Do not overwrite module arguments that are already set
-        for (arg, value) in parsed_args.items():
+        for arg, value in parsed_args.items():
             if arg not in self.modules_args:
                 self.modules_args[arg] = value
-       
 
     def run(self):
         set_logger(logger)
@@ -213,7 +227,7 @@ class Asteroid:
                 logger.info(f"[SCANNING TARGET: {single_target}]")
 
                 # Load each module
-                self.modules_args['target'] = single_target
+                self.modules_args["target"] = single_target
                 instances = self._load_module_instances(self.modules)
 
                 # Process the modules and skip-modules arguments
@@ -250,18 +264,21 @@ class Asteroid:
                     except Exception as e:
                         logger.error(f"Error running {instance.name} module: {e}")
 
+
 def setup_argparse():
     """Sets up the argument parser for the Asteroid scanner."""
     parser = argparse.ArgumentParser(
-            prog="asteroid",
-            description="Runs all Asteroid Web Application Security Scanner modules.",
-        )
+        prog="asteroid",
+        description="Runs all Asteroid Web Application Security Scanner modules.",
+    )
     parser.add_argument(
         "target",
         help="The target domain to crawl, or a file containing domains",
         nargs="?",
     )
-    parser.add_argument("-o", "--output", help="Output directory to save results", default=OUTPUT_DIR)
+    parser.add_argument(
+        "-o", "--output", help="Output directory to save results", default=OUTPUT_DIR
+    )
     parser.add_argument("--modules", help="Comma-separated list of modules to run")
     parser.add_argument(
         "--skip-modules", help="Comma-separated list of modules to skip"
@@ -289,6 +306,7 @@ def setup_argparse():
     )
     return parser
 
+
 if __name__ == "__main__":
     parser = setup_argparse()
 
@@ -297,9 +315,7 @@ if __name__ == "__main__":
         " ".join(sys.argv[1:]).replace("-h", "").replace("--help", "")
     )
     arguments_without_help = shlex.split(arguments_without_help)
-    general_args, _ = parser.parse_known_args(
-        arguments_without_help
-    )
+    general_args, _ = parser.parse_known_args(arguments_without_help)
 
     asteroid = Asteroid(
         target=general_args.target,
@@ -310,9 +326,9 @@ if __name__ == "__main__":
         rerun=general_args.rerun,
         cont=general_args.cont,
         verbose=general_args.verbose,
-        rate_limit=general_args.rate_limit
+        rate_limit=general_args.rate_limit,
     )
-    
+
     asteroid.parse_module_args(parser)
-    
+
     asteroid.run()

@@ -34,12 +34,12 @@ class KatanaModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.rate_limit: Optional[str] = args['rate_limit']
-        self.headless: Optional[bool] = args['headless']
-        self.time_limit: Optional[str] = args['time_limit']
-        self.headers: Optional[str] = args['headers']
-        self.proxy: Optional[str] = args['proxy']
-        self.dont_scan: Optional[str] = args['dont_scan']
+        self.rate_limit: Optional[str] = args["rate_limit"]
+        self.headless: Optional[bool] = args["headless"]
+        self.time_limit: Optional[str] = args["time_limit"]
+        self.headers: Optional[str] = args["headers"]
+        self.proxy: Optional[str] = args["proxy"]
+        self.dont_scan: Optional[str] = args["dont_scan"]
 
         self.output_file: str = f"{self.output_dir}/katana.jsonl"
         self.output_urls_file: str = f"{self.output_dir}/katana-urls.txt"
@@ -112,8 +112,7 @@ class KatanaModule(BaseModule):
         except (FileNotFoundError, KeyError, json.JSONDecodeError) as e:
             logger.error(f"Error processing Katana output: {e}")
             raise
-        
-        logger.info(self.output_urls_file)
+
         filter_false_positives(
             self.output_urls_file, self.output_filtered_file, rate_limit=self.rate_limit
         )

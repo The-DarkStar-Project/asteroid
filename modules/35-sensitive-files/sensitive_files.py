@@ -32,13 +32,13 @@ class SensitiveFilesModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.C: Optional[str] = args['C']
-        self.rate_limit: Optional[str] = args['rate_limit']
-        self.time_limit: Optional[str] = args['time_limit']
-        self.headers: Optional[str] = args['headers']
-        self.proxy: Optional[str] = args['proxy']
-        self.sensitive_files_wordlist: str = args['sensitive_files_wordlist']
-        self.dont_scan: Optional[str] = args['dont_scan']
+        self.C: Optional[str] = args["C"]
+        self.rate_limit: Optional[str] = args["rate_limit"]
+        self.time_limit: Optional[str] = args["time_limit"]
+        self.headers: Optional[str] = args["headers"]
+        self.proxy: Optional[str] = args["proxy"]
+        self.sensitive_files_wordlist: str = args["sensitive_files_wordlist"]
+        self.dont_scan: Optional[str] = args["dont_scan"]
 
         self.output_file: str = f"{self.output_dir}/sensitive-files.txt"
 

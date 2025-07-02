@@ -23,18 +23,18 @@ class BaseModule(ABC):
 
         :param args: The command line arguments passed to the script.
         """
-        self.target = args['target']
+        self.target = args["target"]
 
         if not str(self.target).startswith("http") and not str(self.target).startswith(
             "https://"
         ):
             self.target = "http://" + str(self.target)  # TODO: check if http or https
 
-        self.output_dir = args['output_dir']
+        self.output_dir = args["output_dir"]
         if not self.output_dir:
             self.output_dir = os.path.join(OUTPUT_DIR, urlparse(self.target).netloc)
 
-        self.verbose = args['verbose']
+        self.verbose = args["verbose"]
 
         self.target_name = urlparse(self.target).netloc
         self.script_dir = os.path.dirname(

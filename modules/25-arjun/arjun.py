@@ -33,10 +33,10 @@ class ArjunModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.rate_limit: str = args['rate_limit']
-        self.headers: Optional[str] = args['headers']
-        self.proxy: Optional[str] = args['proxy']
-        self.arjun_wordlist: str = args['arjun_wordlist']
+        self.rate_limit: str = args["rate_limit"]
+        self.headers: Optional[str] = args["headers"]
+        self.proxy: Optional[str] = args["proxy"]
+        self.arjun_wordlist: str = args["arjun_wordlist"]
 
         self.urls_non_static_file: str = f"{self.output_dir}/urls-non-static.txt"
         self.output_file: str = f"{self.output_dir}/arjun.txt"

@@ -183,9 +183,9 @@ class FileUploadModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.rate_limit: Optional[str] = args['rate_limit']
-        self.headers: Optional[str] = args['headers']
-        self.proxy: Optional[str] = args['proxy']
+        self.rate_limit: Optional[str] = args["rate_limit"]
+        self.headers: Optional[str] = args["headers"]
+        self.proxy: Optional[str] = args["proxy"]
 
         self.success_codes = [200, 201, 202, 204, 301, 302, 303, 307, 308]
 
