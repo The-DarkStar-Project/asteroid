@@ -35,17 +35,17 @@ class FeroxbusterModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.wordlist: Optional[str] = args.wordlist
-        self.depth: Optional[str] = args.depth
-        self.C: Optional[str] = args.C
-        self.extensions: Optional[str] = args.extensions
-        self.rate_limit: Optional[str] = args.rate_limit
-        self.time_limit: Optional[str] = args.time_limit
-        self.headers: Optional[str] = args.headers
-        self.proxy: Optional[str] = args.proxy
-        self.dont_scan: Optional[str] = args.dont_scan
+        self.wordlist: Optional[str] = args['wordlist']
+        self.depth: Optional[str] = args['depth']
+        self.C: Optional[str] = args['C']
+        self.extensions: Optional[str] = args['extensions']
+        self.rate_limit: Optional[str] = args['rate_limit']
+        self.time_limit: Optional[str] = args['time_limit']
+        self.headers: Optional[str] = args['headers']
+        self.proxy: Optional[str] = args['proxy']
+        self.dont_scan: Optional[str] = args['dont_scan']
 
-        self.output_file: str = f"{self.output}/feroxbuster.txt"
+        self.output_file: str = f"{self.output_dir}/feroxbuster.txt"
 
     def has_run_before(self) -> bool:
         """Checks if the Feroxbuster scan has been run before by checking the output file."""

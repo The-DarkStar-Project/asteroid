@@ -27,11 +27,11 @@ class VulnscanModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.size: Optional[str] = args.size
-        self.update = args.update
+        self.size: Optional[str] = args['size']
+        self.update = args['update']
 
-        self.output_file: str = f"{self.output}/vulnscan.txt"
-        self.wappalyzer_output_file: str = f"{self.output}/wappalyzer.json"
+        self.output_file: str = f"{self.output_dir}/vulnscan.txt"
+        self.wappalyzer_output_file: str = f"{self.output_dir}/wappalyzer.json"
 
     def has_run_before(self) -> bool:
         """Checks if the module has run before by checking the existence of the output file."""

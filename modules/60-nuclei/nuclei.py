@@ -36,24 +36,24 @@ class NucleiModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.rate_limit: Optional[str] = args.rate_limit
-        self.headers: Optional[str] = args.headers
-        self.proxy: Optional[str] = args.proxy
+        self.rate_limit: Optional[str] = args['rate_limit']
+        self.headers: Optional[str] = args['headers']
+        self.proxy: Optional[str] = args['proxy']
 
         self.run_on_forms: bool = True
 
-        self.katana_output_file: str = f"{self.output}/katana.jsonl"
-        self.forms_output_file: str = f"{self.output}/forms.xml"
+        self.katana_output_file: str = f"{self.output_dir}/katana.jsonl"
+        self.forms_output_file: str = f"{self.output_dir}/forms.xml"
 
-        self.urls_with_params: str = f"{self.output}/urls-with-params.txt"
+        self.urls_with_params: str = f"{self.output_dir}/urls-with-params.txt"
 
-        self.output_file: str = f"{self.output}/nuclei.txt"
-        self.output_file_urls: str = f"{self.output}/nuclei-urls.txt"
-        self.output_file_forms: str = f"{self.output}/nuclei-forms.txt"  # TODO: better name? see forms_output_file
-        self.output_file_ssl: str = f"{self.output}/nuclei-ssl.txt"
-        self.output_file_headers: str = f"{self.output}/nuclei-headers.txt"
-        self.output_file_cookies: str = f"{self.output}/nuclei-cookies.txt"
-        self.output_file_file_uploads: str = f"{self.output}/nuclei-file-uploads.txt"
+        self.output_file: str = f"{self.output_dir}/nuclei.txt"
+        self.output_file_urls: str = f"{self.output_dir}/nuclei-urls.txt"
+        self.output_file_forms: str = f"{self.output_dir}/nuclei-forms.txt"  # TODO: better name? see forms_output_file
+        self.output_file_ssl: str = f"{self.output_dir}/nuclei-ssl.txt"
+        self.output_file_headers: str = f"{self.output_dir}/nuclei-headers.txt"
+        self.output_file_cookies: str = f"{self.output_dir}/nuclei-cookies.txt"
+        self.output_file_file_uploads: str = f"{self.output_dir}/nuclei-file-uploads.txt"
 
     def has_run_before(self) -> bool:
         """Checks if the module has run before by checking the existence of the output file."""

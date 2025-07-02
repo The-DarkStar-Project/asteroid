@@ -183,16 +183,16 @@ class FileUploadModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.rate_limit: Optional[str] = args.rate_limit
-        self.headers: Optional[str] = args.headers
-        self.proxy: Optional[str] = args.proxy
+        self.rate_limit: Optional[str] = args['rate_limit']
+        self.headers: Optional[str] = args['headers']
+        self.proxy: Optional[str] = args['proxy']
 
         self.success_codes = [200, 201, 202, 204, 301, 302, 303, 307, 308]
 
-        self.input_file: str = f"{self.output}/nuclei-file-uploads.txt"
-        self.wappalyzer_file: str = f"{self.output}/wappalyzer.json"
+        self.input_file: str = f"{self.output_dir}/nuclei-file-uploads.txt"
+        self.wappalyzer_file: str = f"{self.output_dir}/wappalyzer.json"
 
-        self.output_file: str = f"{self.output}/file-uploads.txt"
+        self.output_file: str = f"{self.output_dir}/file-uploads.txt"
 
     def has_run_before(self) -> bool:
         """Checks if the module has run before by checking the existence of the output file."""

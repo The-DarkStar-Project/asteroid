@@ -35,11 +35,11 @@ class GauModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.proxy: Optional[str] = args.proxy
-        self.rate_limit: Optional[str] = args.rate_limit  # Used for httpx
+        self.proxy: Optional[str] = args['proxy']
+        self.rate_limit: Optional[str] = args['rate_limit']  # Used for httpx
 
-        self.output_file: str = f"{self.output}/gau.txt"
-        self.output_filtered_file: str = f"{self.output}/gau-filtered.txt"
+        self.output_file: str = f"{self.output_dir}/gau.txt"
+        self.output_filtered_file: str = f"{self.output_dir}/gau-filtered.txt"
 
     def has_run_before(self) -> bool:
         """Checks if the Gau scan has been run before by checking the output file."""

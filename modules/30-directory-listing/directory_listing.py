@@ -24,8 +24,8 @@ class DirectoryListingModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.feroxbuster_output_file: str = f"{args.output}/feroxbuster.txt"
-        self.output_file: str = f"{args.output}/directory-listings.txt"
+        self.feroxbuster_output_file: str = f"{self.output_dir}/feroxbuster.txt"
+        self.output_file: str = f"{self.output_dir}/directory-listings.txt"
 
     def has_run_before(self) -> bool:
         """Checks if the Directory Listing scan has been run before by checking the output file."""

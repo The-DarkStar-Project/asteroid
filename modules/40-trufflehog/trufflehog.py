@@ -28,12 +28,12 @@ class TrufflehogModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.rate_limit: Optional[str] = args.rate_limit
-        self.headers: Optional[str] = args.headers
-        self.proxy: Optional[str] = args.proxy
-        self.cleanup: Optional[bool] = args.cleanup
+        self.rate_limit: Optional[str] = args['rate_limit']
+        self.headers: Optional[str] = args['headers']
+        self.proxy: Optional[str] = args['proxy']
+        self.cleanup: Optional[bool] = args['cleanup']
 
-        self.output_file: str = f"{args.output}/trufflehog.txt"
+        self.output_file: str = f"{self.output_dir}/trufflehog.txt"
 
     def has_run_before(self) -> bool:
         """Checks if the module has run before by checking the existence of the output file."""
@@ -62,7 +62,7 @@ class TrufflehogModule(BaseModule):
     def run(self):
         """Runs Trufflehog with the provided arguments."""
         # Ensure the output directory for Trufflehog exists
-        trufflehog_output_dir = os.path.join(self.output, "trufflehog_output")
+        trufflehog_output_dir = os.path.join(self.output_dir, "trufflehog_output")
         if not os.path.exists(trufflehog_output_dir):
             os.makedirs(trufflehog_output_dir)
 

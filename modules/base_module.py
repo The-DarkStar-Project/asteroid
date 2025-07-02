@@ -23,29 +23,29 @@ class BaseModule(ABC):
 
         :param args: The command line arguments passed to the script.
         """
-        self.target = args.target
+        self.target = args['target']
 
         if not str(self.target).startswith("http") and not str(self.target).startswith(
             "https://"
         ):
             self.target = "http://" + str(self.target)  # TODO: check if http or https
 
-        self.output = args.output
-        if not self.output:
-            self.output = os.path.join(OUTPUT_DIR, urlparse(self.target).netloc)
+        self.output_dir = args['output_dir']
+        if not self.output_dir:
+            self.output_dir = os.path.join(OUTPUT_DIR, urlparse(self.target).netloc)
 
-        self.verbose = args.verbose
+        self.verbose = args['verbose']
 
         self.target_name = urlparse(self.target).netloc
         self.script_dir = os.path.dirname(
             sys.modules[self.__class__.__module__].__file__
         )
-        self.urls_file = os.path.join(self.output, URLS_FILE)
-        self.directories_file = os.path.join(self.output, DIRECTORIES_FILE)
+        self.urls_file = os.path.join(self.output_dir, URLS_FILE)
+        self.directories_file = os.path.join(self.output_dir, DIRECTORIES_FILE)
 
         # Ensure the output directory exists
-        if not os.path.exists(self.output):
-            os.makedirs(self.output)
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
 
     @abstractmethod
     def pre(self) -> bool:

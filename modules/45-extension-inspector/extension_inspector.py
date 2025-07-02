@@ -100,7 +100,7 @@ class ExtensionInspectorModule(BaseModule):
             ),
         }
 
-        self.output_file: str = f"{args.output}/extension-inspector.txt"
+        self.output_file: str = f"{self.output_dir}/extension-inspector.txt"
 
     def has_run_before(self) -> bool:
         """Checks if the module has run before by checking the existence of the output file."""
