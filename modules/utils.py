@@ -192,7 +192,14 @@ def filter_false_positives(input_file, output_file, rate_limit=150):
         raise
 
 
-def run_command(command, verbose=False, capture_output=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, **kwargs):
+def run_command(
+    command,
+    verbose=False,
+    capture_output=False,
+    stdout=subprocess.DEVNULL,
+    stderr=subprocess.DEVNULL,
+    **kwargs,
+):
     """Runs a shell command and returns the output."""
     logger.debug(f"Running command: {' '.join(command)}")
     process = None
@@ -207,7 +214,7 @@ def run_command(command, verbose=False, capture_output=False, stdout=subprocess.
                 stdout = sys.stdout
             if stderr == subprocess.DEVNULL:
                 stderr = sys.stderr
-        
+
         process = subprocess.run(
             command,
             **kwargs,

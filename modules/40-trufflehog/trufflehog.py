@@ -134,10 +134,18 @@ class TrufflehogModule(BaseModule):
 def add_arguments(parser):
     group = parser.add_argument_group("trufflehog")
     add_argument_if_not_exists(
-        group, "--keep-downloads", help="Do not cleanup the output directory", action="store_true"
+        group,
+        "--keep-downloads",
+        help="Do not cleanup the output directory",
+        action="store_true",
     )
     add_argument_if_not_exists(group, "-H", "--headers", help="Headers to use")
-    add_argument_if_not_exists(group, "--max-download-size", help="Maximum file size to download, e.g. 5M", default=DEFAULT_MAX_FILESIZE)
+    add_argument_if_not_exists(
+        group,
+        "--max-download-size",
+        help="Maximum file size to download, e.g. 5M",
+        default=DEFAULT_MAX_FILESIZE,
+    )
 
 
 if __name__ == "__main__":
