@@ -47,10 +47,6 @@ class FeroxbusterModule(BaseModule):
 
         self.output_file: str = f"{self.output_dir}/feroxbuster.txt"
 
-    def has_run_before(self) -> bool:
-        """Checks if the Feroxbuster scan has been run before by checking the output file."""
-        return os.path.exists(self.output_file)
-
     def pre(self) -> bool:
         """Checks if Feroxbuster is installed and prepares the environment for Feroxbuster."""
         if not shutil.which("feroxbuster"):

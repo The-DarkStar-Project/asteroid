@@ -27,10 +27,6 @@ class DirectoryListingModule(BaseModule):
         self.feroxbuster_output_file: str = f"{self.output_dir}/feroxbuster.txt"
         self.output_file: str = f"{self.output_dir}/directory-listings.txt"
 
-    def has_run_before(self) -> bool:
-        """Checks if the Directory Listing scan has been run before by checking the output file."""
-        return os.path.exists(self.output_file)
-
     def pre(self) -> bool:
         """Checks preconditions before running Feroxbuster."""
         if not os.path.exists(self.feroxbuster_output_file):

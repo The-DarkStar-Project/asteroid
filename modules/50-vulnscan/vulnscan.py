@@ -33,10 +33,6 @@ class VulnscanModule(BaseModule):
         self.output_file: str = f"{self.output_dir}/vulnscan.txt"
         self.wappalyzer_output_file: str = f"{self.output_dir}/wappalyzer.json"
 
-    def has_run_before(self) -> bool:
-        """Checks if the module has run before by checking the existence of the output file."""
-        return os.path.exists(self.output_file)
-
     def pre(self) -> bool:
         """Checks preconditions before running Vulnscan."""
         if not shutil.which("wappalyzer"):

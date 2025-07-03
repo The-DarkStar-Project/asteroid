@@ -42,10 +42,6 @@ class SensitiveFilesModule(BaseModule):
 
         self.output_file: str = f"{self.output_dir}/sensitive-files.txt"
 
-    def has_run_before(self) -> bool:
-        """Checks if the Sensitive Files scan has been run before by checking the output file."""
-        return os.path.exists(self.output_file)
-
     def pre(self) -> bool:
         """Checks preconditions before running Sensitive Files fuzzer."""
         if not shutil.which("feroxbuster"):

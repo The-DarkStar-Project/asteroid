@@ -35,10 +35,6 @@ class TrufflehogModule(BaseModule):
 
         self.output_file: str = f"{self.output_dir}/trufflehog.txt"
 
-    def has_run_before(self) -> bool:
-        """Checks if the module has run before by checking the existence of the output file."""
-        return os.path.exists(self.output_file)
-
     def pre(self) -> bool:
         """Checks if the necessary conditions are met before running the module."""
         if not os.path.exists(self.urls_file):

@@ -102,10 +102,6 @@ class ExtensionInspectorModule(BaseModule):
 
         self.output_file: str = f"{self.output_dir}/extension-inspector.txt"
 
-    def has_run_before(self) -> bool:
-        """Checks if the module has run before by checking the existence of the output file."""
-        return os.path.exists(self.output_file)
-
     def pre(self) -> bool:
         """Preconditions for running the module."""
         if not os.path.exists(self.urls_file):

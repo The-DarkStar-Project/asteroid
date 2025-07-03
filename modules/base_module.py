@@ -47,6 +47,10 @@ class BaseModule(ABC):
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
 
+    def has_run_before(self) -> bool:
+        """Checks if the module has run before by checking the existence of the output file."""
+        return os.path.exists(self.output_file)
+    
     @abstractmethod
     def pre(self) -> bool:
         """Checks preconditions before running the module."""
@@ -61,7 +65,3 @@ class BaseModule(ABC):
     def post(self):
         """Performs post-processing after the module has run."""
         pass
-
-    def has_run_before(self) -> bool:
-        """Checks if the module has already been executed."""
-        return False

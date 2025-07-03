@@ -41,10 +41,6 @@ class GauModule(BaseModule):
         self.output_file: str = f"{self.output_dir}/gau.txt"
         self.output_filtered_file: str = f"{self.output_dir}/gau-filtered.txt"
 
-    def has_run_before(self) -> bool:
-        """Checks if the Gau scan has been run before by checking the output file."""
-        return os.path.exists(self.output_file)
-
     def pre(self) -> bool:
         """Checks preconditions before running Gau."""
         if not shutil.which("gau"):

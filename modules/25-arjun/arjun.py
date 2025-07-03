@@ -41,10 +41,6 @@ class ArjunModule(BaseModule):
         self.urls_non_static_file: str = f"{self.output_dir}/urls-non-static.txt"
         self.output_file: str = f"{self.output_dir}/arjun.txt"
 
-    def has_run_before(self) -> bool:
-        """Checks if the Arjun scan has been run before by checking the output file."""
-        return os.path.exists(self.output_file)
-
     def pre(self) -> bool:
         """Checks preconditions before running Arjun."""
         if not shutil.which("arjun"):

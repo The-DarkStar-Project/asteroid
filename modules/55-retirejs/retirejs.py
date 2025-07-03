@@ -37,10 +37,6 @@ class RetireJSModule(BaseModule):
 
         self.update_url = "https://raw.githubusercontent.com/RetireJS/retire.js/refs/heads/master/repository/jsrepository.json"
 
-    def has_run_before(self) -> bool:
-        """Checks if the module has run before by checking the existence of the output file."""
-        return os.path.exists(self.output_file)
-
     def pre(self) -> bool:
         """Checks preconditions before running RetireJS."""
         if not os.path.exists(self.js_repository_path):

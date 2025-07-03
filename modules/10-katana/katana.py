@@ -45,10 +45,6 @@ class KatanaModule(BaseModule):
         self.output_urls_file: str = f"{self.output_dir}/katana-urls.txt"
         self.output_filtered_file: str = f"{self.output_dir}/katana-filtered.txt"
 
-    def has_run_before(self) -> bool:
-        """Checks if the Katana scan has been run before by checking the output file."""
-        return os.path.exists(self.output_file)
-
     def pre(self) -> bool:
         """Checks if katana is installed and if target is given"""
         if not shutil.which("katana"):

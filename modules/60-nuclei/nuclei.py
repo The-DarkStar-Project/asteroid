@@ -57,10 +57,6 @@ class NucleiModule(BaseModule):
             f"{self.output_dir}/nuclei-file-uploads.txt"
         )
 
-    def has_run_before(self) -> bool:
-        """Checks if the module has run before by checking the existence of the output file."""
-        return os.path.exists(self.output_file)
-
     def convert_to_xml(self, jsonl_file: str, output_file: str):
         """Converts Katana JSONL output to XML format for Nuclei."""
         new_urls = []
