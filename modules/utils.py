@@ -207,6 +207,9 @@ def run_command(command, verbose=False, capture_output=False, **kwargs):
                 stderr=subprocess.DEVNULL,
             )
     except subprocess.CalledProcessError as e:
+        # Add an exception for Feroxbuster as it returns an exit code of 1 when combining with --time-limit
+        if "feroxbuster" in command[0]:
+            return
         logger.error(f"Command failed with error: {e}")
         return e
     except Exception as e:
