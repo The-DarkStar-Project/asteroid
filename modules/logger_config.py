@@ -47,7 +47,7 @@ def get_logger(name, outputdir=OUTPUT_DIR, level="INFO"):
     return logger
 
 
-def set_logger(logger, outputdir=OUTPUT_DIR, level="INFO"):
+def set_logger(logger, outputdir=None, level="INFO"):
     """
     Sets up the logger with a file handler and colored output.
 
