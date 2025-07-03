@@ -6,22 +6,22 @@ Developed during an internship at [SURF](https://www.surf.nl/).
 **Disclaimer**: Do not run Asteroid on a website without explicit permission of the owner.
 
 ## Features
-| Module     | Default      | Comment |
-| ------------- | ------------- | ------------- |
-| [Katana](https://github.com/projectdiscovery/katana) | ✅ | Uses Katana to crawl the target domain, extracts forms to use with Nuclei |
-| [Feroxbuster](https://github.com/epi052/feroxbuster) | ✅ | Runs Feroxbuster for URL bruteforcing using [raft-small-words.txt](https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/raft-small-words.txt) |
-| [Gau](https://github.com/lc/gau) | ✅ | Runs Gau to collect URLs from AlienVault's Open Threat Exchange, the Wayback Machine, and Common Crawl |
-| [Arjun](https://github.com/s0md3v/Arjun) | ❌ | Fuzzes for GET query parameters with Arjun |
-| Directory Listing | ✅ | Scans Feroxbuster output for open directory listings | 
-| Sensitive Files | ✅ | Runs Feroxbuster with a dangerous files wordlist from [Bo0oM](https://github.com/Bo0oM/fuzz.txt) |
-| [Trufflehog](https://github.com/trufflesecurity/trufflehog) | ❌ | Downloads all URLs with [curl](https://github.com/curl/curl) and scans them for secrets using Trufflehog |
-| Extension Inspector | ✅ | Reports sensitive file extensions, Python implementation of a [Nuclei template](https://github.com/projectdiscovery/nuclei-templates/blob/main/file/url-analyse/url-extension-inspector.yaml) by ayadim |
-| Vulnscan | ✅ | Detects technologies using [wappalyzer-next](https://github.com/s0md3v/wappalyzer-next) and scans for CVEs using [search_vulns](https://github.com/ra1nb0rn/search_vulns)|
-| [RetireJS](https://github.com/retirejs/retire.js/) | ✅ | Runs RetireJS to detect use of vulnerable JavaScript libraries using Python 3 adaptation from [ghostlulzhacks](https://github.com/ghostlulzhacks/RetireJs) |
-| [Nuclei](https://github.com/projectdiscovery/nuclei) | ✅ | Fuzzes for vulnerabilities like XSS and SQLi in URLs and forms using Nuclei DAST templates | 
-| File Upload | ✅ | Detects vulnerable file uploads. Custom tool and work-in-progress |
+| Module     | License | Default      | Comment |
+| ------------- | ------------- | ------------- | ------------- |
+| [Katana](https://github.com/projectdiscovery/katana) | [MIT](https://github.com/projectdiscovery/katana/blob/main/LICENSE.md) | ✅ | Uses Katana to crawl the target domain, extracts forms to use with Nuclei |
+| [Feroxbuster](https://github.com/epi052/feroxbuster) | [MIT](https://github.com/epi052/feroxbuster/blob/main/LICENSE) |  ✅ | Runs Feroxbuster for URL bruteforcing using [raft-small-words.txt](https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/raft-small-words.txt) |
+| [Gau](https://github.com/lc/gau) | [MIT](https://github.com/lc/gau/blob/master/LICENSE) | ✅ | Runs Gau to collect URLs from AlienVault's Open Threat Exchange, the Wayback Machine, and Common Crawl |
+| [Arjun](https://github.com/s0md3v/Arjun) | [AGPL-3.0](https://github.com/s0md3v/Arjun/blob/master/LICENSE) | ❌ | Fuzzes for GET query parameters with Arjun using [params wordlist from param-miner](https://github.com/PortSwigger/param-miner/blob/master/resources/params) |
+| Directory Listing | [MIT](https://github.com/epi052/feroxbuster/blob/main/LICENSE) | ✅ | Scans Feroxbuster output for open directory listings | 
+| Sensitive Files | [MIT](https://github.com/epi052/feroxbuster/blob/main/LICENSE) |  ✅ | Runs Feroxbuster with a dangerous files wordlist from [Bo0oM](https://github.com/Bo0oM/fuzz.txt) |
+| [Trufflehog](https://github.com/trufflesecurity/trufflehog) | [AGPL-3.0](https://github.com/trufflesecurity/trufflehog/blob/main/LICENSE) | ❌ | Downloads all URLs with [curl](https://github.com/curl/curl) and scans them for secrets using Trufflehog |
+| Extension Inspector | - | ✅ | Reports sensitive file extensions, Python implementation of a [Nuclei template](https://github.com/projectdiscovery/nuclei-templates/blob/main/file/url-analyse/url-extension-inspector.yaml) by ayadim |
+| Vulnscan | [GPL-3.0](https://github.com/s0md3v/wappalyzer-next/blob/main/LICENSE) | ✅ | Detects technologies using [wappalyzer-next](https://github.com/s0md3v/wappalyzer-next) and scans for CVEs using [search_vulns](https://github.com/ra1nb0rn/search_vulns)|
+| [RetireJS](https://github.com/retirejs/retire.js/) | [Apache-2.0](https://github.com/RetireJS/retire.js/blob/master/LICENSE.md) | ✅ | Runs RetireJS to detect use of vulnerable JavaScript libraries using Python 3 adaptation from [ghostlulzhacks](https://github.com/ghostlulzhacks/RetireJs) |
+| [Nuclei](https://github.com/projectdiscovery/nuclei) | [MIT](https://github.com/projectdiscovery/nuclei/blob/dev/LICENSE.md) | ✅ | Fuzzes for vulnerabilities like XSS and SQLi in URLs and forms using Nuclei DAST templates | 
+| File Upload | - | ✅ | Detects vulnerable file uploads. Custom tool and work-in-progress |
 
-False positives and duplicate URLs are filtered using [httpx](https://github.com/projectdiscovery/httpx) and [uro](https://github.com/s0md3v/uro).
+False positives and duplicate URLs are filtered using [httpx](https://github.com/projectdiscovery/httpx) ([MIT](https://github.com/projectdiscovery/httpx/blob/main/LICENSE.md)) and [uro](https://github.com/s0md3v/uro) ([Apache-2;0](https://github.com/s0md3v/uro/blob/main/LICENSE)).
 ## Installation
 ### Docker
 Build with docker (takes ~8 min):
