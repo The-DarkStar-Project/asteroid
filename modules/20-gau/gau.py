@@ -2,7 +2,6 @@ import argparse
 import os
 import sys
 import shutil
-from typing import Optional
 
 # Add the parent directory to sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -10,7 +9,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from constants import DEFAULT_RATE_LIMIT
 from utils import (
     logger,
-    add_argument_if_not_exists,
     merge_files,
     run_command,
     filter_false_positives,
@@ -110,9 +108,7 @@ if __name__ == "__main__":
         help="Maximum requests to send per second",
         default=DEFAULT_RATE_LIMIT,
     )
-    parser.add_argument(
-        "-p", "--proxy", help="HTTP proxy to use for the requests"
-    )
+    parser.add_argument("-p", "--proxy", help="HTTP proxy to use for the requests")
     add_arguments(parser)
 
     args = parser.parse_args()

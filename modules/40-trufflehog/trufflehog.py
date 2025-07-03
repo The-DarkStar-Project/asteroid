@@ -144,9 +144,7 @@ if __name__ == "__main__":
         help="Maximum requests to send per second",
         default=DEFAULT_RATE_LIMIT,
     )
-    parser.add_argument(
-        "-p", "--proxy", help="HTTP proxy to use for the requests"
-    )
+    parser.add_argument("-p", "--proxy", help="HTTP proxy to use for the requests")
     add_arguments(parser)
 
     args = parser.parse_args()

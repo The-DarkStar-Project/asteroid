@@ -314,8 +314,8 @@ def setup_argparse():
     )
     parser.add_argument(
         "-p",
-        "--proxy", 
-        help="HTTP proxy to use for the requests, not supported by Vulnscan and RetireJS"
+        "--proxy",
+        help="HTTP proxy to use for the requests, not supported by Vulnscan and RetireJS",
     )
     return parser
 

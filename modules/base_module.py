@@ -51,8 +51,6 @@ class BaseModule(ABC):
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
 
-        
-
     def has_run_before(self) -> bool:
         """Checks if the module has run before by checking the existence of the output file."""
         return os.path.exists(self.output_file)
