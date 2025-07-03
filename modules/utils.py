@@ -192,28 +192,30 @@ def filter_false_positives(input_file, output_file, rate_limit=150):
         raise
 
 
-def run_command(command, verbose=False, capture_output=False, **kwargs):
+def run_command(command, verbose=False, capture_output=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, **kwargs):
     """Runs a shell command and returns the output."""
     logger.debug(f"Running command: {' '.join(command)}")
     process = None
     try:
-        if verbose:
+        if capture_output:
             process = subprocess.run(
                 command, **kwargs, check=True, capture_output=capture_output, text=True
             )
-        elif capture_output:
-            process = subprocess.run(
-                command, **kwargs, check=True, capture_output=capture_output, text=True
-            )
-        else:
-            process = subprocess.run(
-                command,
-                **kwargs,
-                check=True,
-                text=True,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            )
+        elif verbose:
+            # output to stdout and stderr
+            if stdout == subprocess.DEVNULL:
+                stdout = sys.stdout
+            if stderr == subprocess.DEVNULL:
+                stderr = sys.stderr
+        
+        process = subprocess.run(
+            command,
+            **kwargs,
+            check=True,
+            text=True,
+            stdout=stdout,
+            stderr=stderr,
+        )
     except subprocess.CalledProcessError as e:
         # Add an exception for Feroxbuster as it returns an exit code of 1 when combining with --time-limit
         if "feroxbuster" in command[0]:
