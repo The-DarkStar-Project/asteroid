@@ -24,7 +24,7 @@ from modules.utils import logger
 class Asteroid:
     def __init__(
         self,
-        target,
+        target=None,
         output_dir=OUTPUT_DIR,
         specific_modules="default",
         skip_modules=None,
@@ -38,17 +38,7 @@ class Asteroid:
         """
         Initializes the Asteroid scanner with the general arguments and loads modules.
         """
-        list_of_targets = []
-        if not target:
-            logger.critical("Please provide a target")
-            sys.exit(1)
-        elif os.path.isfile(target):
-            with open(target, "r") as f:
-                list_of_targets = [line.strip() for line in f if line.strip()]
-        else:
-            list_of_targets = [target]
-
-        self.target = list_of_targets
+        self.target = target # Processed later with process_target()
 
         self.output_dir = output_dir
         self.specific_modules = specific_modules
@@ -188,7 +178,21 @@ class Asteroid:
                     return 0
         return 0
 
-    def parse_module_args(self, parser):
+    def _process_target(self):
+        list_of_targets = []
+
+        if not self.target:
+            logger.critical("Please provide a target")
+            sys.exit(1)
+        if os.path.isfile(self.target):
+            with open(self.target, "r") as f:
+                list_of_targets = [line.strip() for line in f if line.strip()]
+        else:
+            list_of_targets = [self.target]
+
+        self.target = list_of_targets 
+    
+    def parse_args(self, parser):
         """
         Parses module-specific arguments from the command line.
         """
@@ -202,6 +206,8 @@ class Asteroid:
         for arg, value in parsed_args.items():
             if arg not in self.modules_args:
                 self.modules_args[arg] = value
+        
+        self._process_target()
 
     def run(self):
         set_logger(logger)
@@ -329,6 +335,6 @@ if __name__ == "__main__":
         rate_limit=general_args.rate_limit,
     )
 
-    asteroid.parse_module_args(parser)
+    asteroid.parse_args(parser)
 
     asteroid.run()
