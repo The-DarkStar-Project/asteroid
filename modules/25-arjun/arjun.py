@@ -33,9 +33,7 @@ class ArjunModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.rate_limit: str = args["rate_limit"]
         self.headers: Optional[str] = args["headers"]
-        self.proxy: Optional[str] = args["proxy"]
         self.arjun_wordlist: str = args["arjun_wordlist"]
 
         self.urls_non_static_file: str = f"{self.output_dir}/urls-non-static.txt"
@@ -103,9 +101,6 @@ def add_arguments(parser):
     group = parser.add_argument_group("arjun")
     add_argument_if_not_exists(group, "-H", "--headers", help="Headers to use")
     add_argument_if_not_exists(
-        group, "--proxy", help="HTTP/SOCKS5 proxy to use for the requests"
-    )
-    add_argument_if_not_exists(
         group,
         "-aw",
         "--arjun-wordlist",
@@ -123,6 +118,9 @@ if __name__ == "__main__":
         "--rate-limit",
         help="Maximum requests to send per second",
         default=DEFAULT_RATE_LIMIT,
+    )
+    parser.add_argument(
+        "-p", "--proxy", help="HTTP proxy to use for the requests"
     )
     add_arguments(parser)
     args = parser.parse_args()

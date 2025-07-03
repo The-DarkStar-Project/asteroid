@@ -37,9 +37,8 @@ class NucleiModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.rate_limit: Optional[str] = args["rate_limit"]
+        
         self.headers: Optional[str] = args["headers"]
-        self.proxy: Optional[str] = args["proxy"]
 
         self.run_on_forms: bool = True
 
@@ -359,7 +358,6 @@ def add_arguments(parser):
     """Adds Nuclei-specific arguments to the main argument parser."""
     group = parser.add_argument_group("nuclei")
     add_argument_if_not_exists(group, "-H", "--headers", help="Headers to use")
-    add_argument_if_not_exists(group, "--proxy", help="Proxy to use")
 
 
 if __name__ == "__main__":
@@ -371,6 +369,9 @@ if __name__ == "__main__":
         "--rate-limit",
         help="Maximum requests to send per second",
         default=DEFAULT_RATE_LIMIT,
+    )
+    parser.add_argument(
+        "-p", "--proxy", help="HTTP proxy to use for the requests"
     )
     add_arguments(parser)
 

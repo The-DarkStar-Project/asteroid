@@ -34,11 +34,9 @@ class KatanaModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.rate_limit: Optional[str] = args["rate_limit"]
         self.headless: Optional[bool] = args["headless"]
         self.time_limit: Optional[str] = args["time_limit"]
         self.headers: Optional[str] = args["headers"]
-        self.proxy: Optional[str] = args["proxy"]
         self.dont_scan: Optional[str] = args["dont_scan"]
 
         self.output_file: str = f"{self.output_dir}/katana.jsonl"
@@ -155,9 +153,6 @@ def add_arguments(parser):
     )
     add_argument_if_not_exists(group, "-H", "--headers", help="Headers to use")
     add_argument_if_not_exists(
-        group, "--proxy", help="HTTP/SOCKS5 proxy to use for the requests"
-    )
-    add_argument_if_not_exists(
         group,
         "--dont-scan",
         help="Do not scan URLs matching this regex",
@@ -174,6 +169,9 @@ if __name__ == "__main__":
         "--rate-limit",
         help="Maximum requests to send per second",
         default=DEFAULT_RATE_LIMIT,
+    )
+    parser.add_argument(
+        "-p", "--proxy", help="HTTP proxy to use for the requests"
     )
     add_arguments(parser)
 

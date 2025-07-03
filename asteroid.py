@@ -33,6 +33,7 @@ class Asteroid:
         cont=False,
         verbose=False,
         rate_limit=DEFAULT_RATE_LIMIT,
+        proxy=None,
         module_args={},
     ):
         """
@@ -48,6 +49,7 @@ class Asteroid:
         self.cont = cont
         self.verbose = verbose
         self.rate_limit = rate_limit
+        self.proxy = proxy
 
         # Other arguments are copied to modules_args in _load_module_instances
         self.modules_args = module_args
@@ -310,6 +312,11 @@ def setup_argparse():
         help="Maximum requests to send per second",
         default=DEFAULT_RATE_LIMIT,
     )
+    parser.add_argument(
+        "-p",
+        "--proxy", 
+        help="HTTP proxy to use for the requests, not supported by Vulnscan and RetireJS"
+    )
     return parser
 
 
@@ -333,6 +340,7 @@ if __name__ == "__main__":
         cont=general_args.cont,
         verbose=general_args.verbose,
         rate_limit=general_args.rate_limit,
+        proxy=general_args.proxy,
     )
 
     asteroid.parse_args(parser)

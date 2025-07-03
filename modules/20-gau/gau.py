@@ -35,8 +35,6 @@ class GauModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.proxy: Optional[str] = args["proxy"]
-        self.rate_limit: Optional[str] = args["rate_limit"]  # Used for httpx
 
         self.output_file: str = f"{self.output_dir}/gau.txt"
         self.output_filtered_file: str = f"{self.output_dir}/gau-filtered.txt"
@@ -99,10 +97,7 @@ class GauModule(BaseModule):
 
 def add_arguments(parser):
     """Adds Gau-specific arguments to the main argument parser."""
-    group = parser.add_argument_group("gau")
-    add_argument_if_not_exists(
-        group, "--proxy", help="HTTP/SOCKS5 proxy to use for the requests"
-    )
+    pass
 
 
 if __name__ == "__main__":
@@ -114,6 +109,9 @@ if __name__ == "__main__":
         "--rate-limit",
         help="Maximum requests to send per second",
         default=DEFAULT_RATE_LIMIT,
+    )
+    parser.add_argument(
+        "-p", "--proxy", help="HTTP proxy to use for the requests"
     )
     add_arguments(parser)
 

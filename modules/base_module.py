@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import os
 from urllib.parse import urlparse
 import sys
+from typing import Optional
 
 # Add current directory to sys.path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -43,9 +44,14 @@ class BaseModule(ABC):
         self.urls_file = os.path.join(self.output_dir, URLS_FILE)
         self.directories_file = os.path.join(self.output_dir, DIRECTORIES_FILE)
 
+        self.rate_limit: Optional[str] = args["rate_limit"]
+        self.proxy: Optional[str] = args["proxy"]
+
         # Ensure the output directory exists
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
+
+        
 
     def has_run_before(self) -> bool:
         """Checks if the module has run before by checking the existence of the output file."""

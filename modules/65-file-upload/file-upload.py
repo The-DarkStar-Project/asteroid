@@ -183,9 +183,7 @@ class FileUploadModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.rate_limit: Optional[str] = args["rate_limit"]
         self.headers: Optional[str] = args["headers"]
-        self.proxy: Optional[str] = args["proxy"]
 
         self.success_codes = [200, 201, 202, 204, 301, 302, 303, 307, 308]
 
@@ -368,7 +366,6 @@ class FileUploadModule(BaseModule):
 def add_arguments(parser):
     group = parser.add_argument_group("file-upload")
     add_argument_if_not_exists(group, "-H", "--headers", help="Headers to use")
-    add_argument_if_not_exists(group, "--proxy", help="Proxy to use")
 
 
 if __name__ == "__main__":
@@ -380,6 +377,9 @@ if __name__ == "__main__":
         "--rate-limit",
         help="Maximum requests to send per second",
         default=DEFAULT_RATE_LIMIT,
+    )
+    parser.add_argument(
+        "-p", "--proxy", help="HTTP proxy to use for the requests"
     )
     add_arguments(parser)
 
