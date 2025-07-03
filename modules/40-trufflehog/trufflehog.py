@@ -29,7 +29,8 @@ class TrufflehogModule(BaseModule):
         """
         super().__init__(args)
         self.headers: Optional[str] = args["headers"]
-        self.cleanup: Optional[bool] = args["cleanup"]
+        self.keep_downloads: Optional[bool] = args["keep_downloads"]
+        self.max_download_size: Optional[str] = args["max_download_size"]
 
         self.output_file: str = f"{self.output_dir}/trufflehog.txt"
 
@@ -73,7 +74,7 @@ class TrufflehogModule(BaseModule):
                         output_path,
                         "-s",
                         "--max-filesize",
-                        DEFAULT_MAX_FILESIZE,
+                        self.max_download_size,
                         url,
                     ]
                     if self.headers:
@@ -90,7 +91,7 @@ class TrufflehogModule(BaseModule):
 
                     if return_code == 63:
                         logger.warning(
-                            f"File at {url} is too large to download (exceeds {DEFAULT_MAX_FILESIZE} bytes), only partial download may be available."
+                            f"File at {url} is too large to download (exceeds {self.max_download_size} bytes), only partial download may be available."
                         )
                     elif return_code != 0:
                         logger.error(
@@ -107,11 +108,15 @@ class TrufflehogModule(BaseModule):
         with open(self.output_file, "w") as output_file:
             run_command(cmd_trufflehog, verbose=self.verbose, stdout=output_file)
 
-        # Cleanup downloaded files if the cleanup flag is set
-        if self.cleanup:
+        # Cleanup downloaded files if the keep_output flag is not set
+        if not self.keep_downloads:
             logger.info("Cleaning up downloaded files...")
             for file in os.listdir(trufflehog_output_dir):
                 os.remove(os.path.join(trufflehog_output_dir, file))
+        else:
+            logger.warning(
+                "Keeping downloaded files. You can find them in the trufflehog_output directory."
+            )
 
         with open(self.output_file, "r") as f:
             lines = f.readlines()
@@ -129,9 +134,10 @@ class TrufflehogModule(BaseModule):
 def add_arguments(parser):
     group = parser.add_argument_group("trufflehog")
     add_argument_if_not_exists(
-        group, "--cleanup", help="Cleanup the output directory", action="store_true"
+        group, "--keep-downloads", help="Do not cleanup the output directory", action="store_true"
     )
     add_argument_if_not_exists(group, "-H", "--headers", help="Headers to use")
+    add_argument_if_not_exists(group, "--max-download-size", help="Maximum file size to download, e.g. 5M", default=DEFAULT_MAX_FILESIZE)
 
 
 if __name__ == "__main__":
