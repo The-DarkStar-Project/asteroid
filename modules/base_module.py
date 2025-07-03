@@ -50,7 +50,7 @@ class BaseModule(ABC):
     def has_run_before(self) -> bool:
         """Checks if the module has run before by checking the existence of the output file."""
         return os.path.exists(self.output_file)
-    
+
     @abstractmethod
     def pre(self) -> bool:
         """Checks preconditions before running the module."""

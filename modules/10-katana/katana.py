@@ -53,6 +53,18 @@ class KatanaModule(BaseModule):
             )
             return False
 
+        if not shutil.which("uro"):
+            logger.critical(
+                "uro is not installed or not in PATH. Please install it before running."
+            )
+            return False
+
+        if not shutil.which("httpx"):
+            logger.critical(
+                "https is not installed or not in PATH. Please install it before running."
+            )
+            return False
+
         if not self.target:
             logger.critical("No target specified. Please provide a valid target.")
             return False

@@ -5,6 +5,7 @@ import sys
 import json
 import base64
 import requests
+import shutil
 from typing import Optional
 
 # Add the parent directory to sys.path
@@ -150,6 +151,12 @@ class NucleiModule(BaseModule):
 
     def pre(self) -> bool:
         """Preconditions for running the module."""
+        if not shutil.which("nuclei"):
+            logger.critical(
+                "Nuclei is not installed or not in PATH. Please install it before running."
+            )
+            return False
+
         if not os.path.exists(self.katana_output_file):
             logger.warning(
                 f"Katana output file {self.katana_output_file} does not exist, continuing without forms"
