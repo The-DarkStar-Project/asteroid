@@ -38,7 +38,7 @@ class Asteroid:
         """
         Initializes the Asteroid scanner with the general arguments and loads modules.
         """
-        self.target = target # Processed later with process_target()
+        self.target = target  # Processed later with process_target()
 
         self.output_dir = output_dir
         self.specific_modules = specific_modules
@@ -190,8 +190,8 @@ class Asteroid:
         else:
             list_of_targets = [self.target]
 
-        self.target = list_of_targets 
-    
+        self.target = list_of_targets
+
     def parse_args(self, parser):
         """
         Parses module-specific arguments from the command line.
@@ -206,7 +206,7 @@ class Asteroid:
         for arg, value in parsed_args.items():
             if arg not in self.modules_args:
                 self.modules_args[arg] = value
-        
+
         self._process_target()
 
     def run(self):
