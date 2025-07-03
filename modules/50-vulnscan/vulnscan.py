@@ -181,7 +181,7 @@ class VulnscanModule(BaseModule):
 
 
 def add_arguments(parser):
-    """Adds Gau-specific arguments to the main argument parser."""
+    """Adds Vulnscan-specific arguments to the main argument parser."""
     group = parser.add_argument_group("vulnscan")
     add_argument_if_not_exists(
         group, "-s", "--size", help="Max number of outputs by search_vulns", default=5

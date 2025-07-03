@@ -128,9 +128,9 @@ class Asteroid:
             sys.exit(0)
 
         if self.specific_modules:
-            if self.specific_modules.modules.lower() == "all":
+            if self.specific_modules.lower() == "all":
                 return instances
-            selected = self.specific_modules.modules.lower().split(",")
+            selected = self.specific_modules.lower().split(",")
             return [
                 instance for instance in instances if instance.name.lower() in selected
             ]
