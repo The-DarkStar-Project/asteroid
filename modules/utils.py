@@ -71,6 +71,9 @@ def add_argument_if_not_exists(parser, *args, **kwargs):
 
 def merge_files(file1, file2, output_file):
     """Merges two files into one, removing duplicates with uro."""
+    logger.debug(
+        f"Merging files {file1} and {file2} into {output_file} using uro for deduplication."
+    )
     lines = set()
 
     # Read lines from file1 if it exists
@@ -87,14 +90,17 @@ def merge_files(file1, file2, output_file):
     if os.path.exists(output_file):
         os.remove(output_file)
 
-    process = subprocess.Popen(
-        ["uro", "-o", output_file], stdin=subprocess.PIPE, text=True
-    )
+    uro_cmd = ["uro", "-o", output_file]
+    logger.debug(f"Running uro command: {' '.join(uro_cmd)}")
+    process = subprocess.Popen(uro_cmd, stdin=subprocess.PIPE, text=True)
     process.communicate(input="\n".join(sorted(lines)))
 
 
 def merge_list_with_file(list_to_merge, file_to_merge, output_file):
     """Merges a list with a file, removing duplicates with uro."""
+    logger.debug(
+        f"Merging list with file {file_to_merge} into {output_file} using uro for deduplication."
+    )
     lines = set(list_to_merge)
 
     # Read lines from the file if it exists
@@ -110,9 +116,9 @@ def merge_list_with_file(list_to_merge, file_to_merge, output_file):
     if os.path.exists(output_file):
         os.remove(output_file)
 
-    process = subprocess.Popen(
-        ["uro", "-o", output_file], stdin=subprocess.PIPE, text=True
-    )
+    uro_cmd = ["uro", "-o", output_file]
+    logger.debug(f"Running uro command: {' '.join(uro_cmd)}")
+    process = subprocess.Popen(uro_cmd, stdin=subprocess.PIPE, text=True)
     process.communicate(input="\n".join(sorted(lines)))
 
 
@@ -148,6 +154,8 @@ def filter_false_positives(input_file, output_file, rate_limit=150):
     try:
         # Run `uro` and pipe its output to `httpx`
         uro_cmd = ["uro", "-i", input_file]
+        logger.debug(f"Running command: {' '.join(uro_cmd)} | {' '.join(httpx_cmd)}")
+
         uro_proc = subprocess.Popen(
             uro_cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True
         )
