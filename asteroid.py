@@ -120,8 +120,15 @@ class Asteroid:
             sys.exit(0)
 
         if self.specific_modules:
-            if self.specific_modules.lower() == "all":
+            if self.specific_modules.lower() == "default":
+                return [
+                    instance
+                    for instance in instances
+                    if instance.is_default_module
+                ]
+            elif self.specific_modules.lower() == "all":
                 return instances
+            
             selected = self.specific_modules.lower().split(",")
             return [
                 instance for instance in instances if instance.name.lower() in selected
@@ -185,7 +192,7 @@ class Asteroid:
 
         if not self.target:
             logger.critical("Please provide a target")
-            sys.exit(1)
+            raise ValueError("Target is required")
         if os.path.isfile(self.target):
             with open(self.target, "r") as f:
                 list_of_targets = [line.strip() for line in f if line.strip()]
@@ -209,9 +216,9 @@ class Asteroid:
             if arg not in self.modules_args:
                 self.modules_args[arg] = value
 
+    def run(self):
         self._process_target()
 
-    def run(self):
         set_logger(logger)
 
         starting_target_index = self._check_target_rerun()
@@ -287,7 +294,7 @@ def setup_argparse():
     parser.add_argument(
         "-o", "--output", help="Output directory to save results", default=OUTPUT_DIR
     )
-    parser.add_argument("--modules", help="Comma-separated list of modules to run")
+    parser.add_argument("--modules", help="Comma-separated list of modules to run", default="default")
     parser.add_argument(
         "--skip-modules", help="Comma-separated list of modules to skip"
     )

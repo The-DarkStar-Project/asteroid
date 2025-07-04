@@ -41,13 +41,15 @@ class FeroxbusterModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.wordlist: Optional[str] = args["wordlist"]
-        self.depth: Optional[str] = args["depth"]
-        self.C: Optional[str] = args["C"]
-        self.extensions: Optional[str] = args["extensions"]
-        self.time_limit: Optional[str] = args["time_limit"]
-        self.headers: Optional[str] = args["headers"]
-        self.dont_scan: Optional[str] = args["dont_scan"]
+        self.wordlist: Optional[str] = args.get("wordlist", DEFAULT_FEROXBUSTER_WORDLIST)
+        self.depth: Optional[str] = args.get("depth", DEFAULT_FEROXBUSTER_DEPTH)
+        self.C: Optional[str] = args.get("C", DEFAULT_FEROXBUSTER_FILTER_STATUS_CODES)
+        self.extensions: Optional[str] = args.get(
+            "extensions", DEFAULT_FEROXBUSTER_EXTENSIONS
+        )
+        self.time_limit: Optional[str] = args.get("time_limit", DEFAULT_TIME_LIMIT)
+        self.headers: Optional[str] = args.get("headers")
+        self.dont_scan: Optional[str] = args.get("dont_scan", DEFAULT_DONT_SCAN_REGEX)
 
         self.output_file: str = f"{self.output_dir}/feroxbuster.txt"
 

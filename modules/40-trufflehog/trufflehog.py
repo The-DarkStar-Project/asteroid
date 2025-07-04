@@ -29,9 +29,9 @@ class TrufflehogModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.headers: Optional[str] = args["headers"]
-        self.keep_downloads: Optional[bool] = args["keep_downloads"]
-        self.max_download_size: Optional[str] = args["max_download_size"]
+        self.headers: Optional[str] = args.get("headers")
+        self.keep_downloads: Optional[bool] = args.get("keep_downloads", False)
+        self.max_download_size: Optional[str] = args.get("max_download_size", DEFAULT_MAX_FILESIZE)
 
         self.output_file: str = f"{self.output_dir}/trufflehog.txt"
 

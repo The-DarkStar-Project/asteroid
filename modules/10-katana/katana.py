@@ -35,10 +35,10 @@ class KatanaModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.headless: Optional[bool] = args["headless"]
-        self.time_limit: Optional[str] = args["time_limit"]
-        self.headers: Optional[str] = args["headers"]
-        self.dont_scan: Optional[str] = args["dont_scan"]
+        self.headless: Optional[bool] = args.get("headless", False)
+        self.time_limit: Optional[str] = args.get("time_limit", DEFAULT_TIME_LIMIT)
+        self.headers: Optional[str] = args.get("headers")
+        self.dont_scan: Optional[str] = args.get("dont_scan", DEFAULT_DONT_SCAN_REGEX)
 
         self.output_file: str = f"{self.output_dir}/katana.jsonl"
         self.output_urls_file: str = f"{self.output_dir}/katana-urls.txt"

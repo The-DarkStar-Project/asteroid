@@ -146,7 +146,7 @@ class VulnscanModule(BaseModule):
 
         self.search_vulns_api = SearchVulnsAPI(SEARCH_VULNS_API_KEY, proxy=self.proxy)
 
-        self.size: Optional[str] = args["size"]
+        self.size: Optional[str] = args.get("size", VULNSCAN_OUTPUT_SIZE)
 
         self.output_file: str = f"{self.output_dir}/vulnscan.txt"
         self.wappalyzer_output_file: str = f"{self.output_dir}/wappalyzer.json"

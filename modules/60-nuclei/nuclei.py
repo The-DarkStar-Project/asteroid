@@ -38,7 +38,7 @@ class NucleiModule(BaseModule):
         """
         super().__init__(args)
 
-        self.headers: Optional[str] = args["headers"]
+        self.headers: Optional[str] = args.get("headers")
 
         self.run_on_forms: bool = True
 

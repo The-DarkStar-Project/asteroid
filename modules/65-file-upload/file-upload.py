@@ -183,7 +183,7 @@ class FileUploadModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.headers: Optional[str] = args["headers"]
+        self.headers: Optional[str] = args.get("headers")
 
         self.success_codes = [200, 201, 202, 204, 301, 302, 303, 307, 308]
 

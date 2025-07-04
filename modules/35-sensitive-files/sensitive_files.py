@@ -33,11 +33,11 @@ class SensitiveFilesModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.C: Optional[str] = args["C"]
-        self.time_limit: Optional[str] = args["time_limit"]
-        self.headers: Optional[str] = args["headers"]
-        self.sensitive_files_wordlist: str = args["sensitive_files_wordlist"]
-        self.dont_scan: Optional[str] = args["dont_scan"]
+        self.C: Optional[str] = args.get("C", DEFAULT_FEROXBUSTER_FILTER_STATUS_CODES)
+        self.time_limit: Optional[str] = args.get("time_limit", DEFAULT_TIME_LIMIT)
+        self.headers: Optional[str] = args.get("headers")
+        self.sensitive_files_wordlist: str = args.get("sensitive_files_wordlist", DEFAULT_SENSITIVE_FILES_WORDLIST)
+        self.dont_scan: Optional[str] = args.get("dont_scan", DEFAULT_DONT_SCAN_REGEX)
 
         self.output_file: str = f"{self.output_dir}/sensitive-files.txt"
 
