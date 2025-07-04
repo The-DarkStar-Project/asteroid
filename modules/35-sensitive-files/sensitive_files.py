@@ -36,7 +36,9 @@ class SensitiveFilesModule(BaseModule):
         self.C: Optional[str] = args.get("C", DEFAULT_FEROXBUSTER_FILTER_STATUS_CODES)
         self.time_limit: Optional[str] = args.get("time_limit", DEFAULT_TIME_LIMIT)
         self.headers: Optional[str] = args.get("headers")
-        self.sensitive_files_wordlist: str = args.get("sensitive_files_wordlist", DEFAULT_SENSITIVE_FILES_WORDLIST)
+        self.sensitive_files_wordlist: str = args.get(
+            "sensitive_files_wordlist", DEFAULT_SENSITIVE_FILES_WORDLIST
+        )
         self.dont_scan: Optional[str] = args.get("dont_scan", DEFAULT_DONT_SCAN_REGEX)
 
         self.output_file: str = f"{self.output_dir}/sensitive-files.txt"

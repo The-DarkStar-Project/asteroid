@@ -31,7 +31,9 @@ class TrufflehogModule(BaseModule):
         super().__init__(args)
         self.headers: Optional[str] = args.get("headers")
         self.keep_downloads: Optional[bool] = args.get("keep_downloads", False)
-        self.max_download_size: Optional[str] = args.get("max_download_size", DEFAULT_MAX_FILESIZE)
+        self.max_download_size: Optional[str] = args.get(
+            "max_download_size", DEFAULT_MAX_FILESIZE
+        )
 
         self.output_file: str = f"{self.output_dir}/trufflehog.txt"
 

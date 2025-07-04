@@ -41,7 +41,9 @@ class FeroxbusterModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.wordlist: Optional[str] = args.get("wordlist", DEFAULT_FEROXBUSTER_WORDLIST)
+        self.wordlist: Optional[str] = args.get(
+            "wordlist", DEFAULT_FEROXBUSTER_WORDLIST
+        )
         self.depth: Optional[str] = args.get("depth", DEFAULT_FEROXBUSTER_DEPTH)
         self.C: Optional[str] = args.get("C", DEFAULT_FEROXBUSTER_FILTER_STATUS_CODES)
         self.extensions: Optional[str] = args.get(
