@@ -56,7 +56,7 @@ class ArjunModule(BaseModule):
 
         if not os.path.exists(self.urls_non_static_file):
             match_urls_non_static(self.urls_file, self.urls_non_static_file)
-
+        logger.info("pre done")
         return True
 
     def run(self):
@@ -81,6 +81,7 @@ class ArjunModule(BaseModule):
             cmd_arjun.extend(["-oB", self.proxy])
 
         run_command(cmd_arjun, verbose=self.verbose)
+        logger.info("run done")
 
     def post(self):
         """Prints results and merges Arjun results with the URLs file."""

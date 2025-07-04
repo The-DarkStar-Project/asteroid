@@ -3,6 +3,7 @@ import os
 import sys
 import random
 import string
+from urllib.parse import parse_qs, urlparse
 
 # Add parent directory to sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -70,60 +71,56 @@ def add_argument_if_not_exists(parser, *args, **kwargs):
 
 
 def merge_files(file1, file2, output_file):
-    """Merges two files into one, removing duplicates with uro."""
+    """Merges two files into one, removing duplicates."""
     logger.debug(
-        f"Merging files {file1} and {file2} into {output_file} using uro for deduplication."
+        f"Merging files {file1} and {file2} into {output_file}, removing duplicates."
     )
     lines = set()
 
     # Read lines from file1 if it exists
     if os.path.exists(file1):
         with open(file1, "r") as f1:
-            lines.update(f1.readlines())
+            lines.update([line.strip() for line in f1])
 
     # Read lines from file2 if it exists
     if os.path.exists(file2):
         with open(file2, "r") as f2:
-            lines.update(f2.readlines())
+            lines.update([line.strip() for line in f2])
 
-    # Write the merged lines to the output file using uro for deduplication
+    # Write the merged lines to the output file
     if os.path.exists(output_file):
         os.remove(output_file)
 
-    uro_cmd = ["uro", "-o", output_file]
-    logger.debug(f"Running uro command: {' '.join(uro_cmd)}")
-    process = subprocess.Popen(uro_cmd, stdin=subprocess.PIPE, text=True)
-    process.communicate(input="\n".join(sorted(lines)))
+    with open(output_file, "w") as f_out:
+        f_out.write("\n".join(deduplicate_urls(list(filter(lambda x: bool(x.strip()), lines)))))
 
 
 def merge_list_with_file(list_to_merge, file_to_merge, output_file):
-    """Merges a list with a file, removing duplicates with uro."""
+    """Merges a list with a file, removing duplicates."""
     logger.debug(
-        f"Merging list with file {file_to_merge} into {output_file} using uro for deduplication."
+        f"Merging list with file {file_to_merge} into {output_file}, removing duplicates."
     )
     lines = set(list_to_merge)
 
     # Read lines from the file if it exists
     if os.path.exists(file_to_merge):
         with open(file_to_merge, "r") as f:
-            lines.update(f.readlines())
+            lines.update([line.strip() for line in f])
     else:
         logger.debug(
             f"File {file_to_merge} does not exist. Proceeding with the list only."
         )
 
-    # Use uro to remove duplicates and write to the output file
+    # Write the merged lines to the output file
     if os.path.exists(output_file):
         os.remove(output_file)
 
-    uro_cmd = ["uro", "-o", output_file]
-    logger.debug(f"Running uro command: {' '.join(uro_cmd)}")
-    process = subprocess.Popen(uro_cmd, stdin=subprocess.PIPE, text=True)
-    process.communicate(input="\n".join(sorted(lines)))
+    with open(output_file, "w") as f_out:
+        f_out.write("\n".join(deduplicate_urls(list(filter(lambda x: bool(x.strip()), lines)))))
 
 
 def filter_false_positives(input_file, output_file, rate_limit=150):
-    """Filters out duplicates and false positives from the input file using uro and httpx."""
+    """Filters out duplicates and false positives from the input file using httpx."""
     if not os.path.exists(input_file):
         logger.critical(f"Input file {input_file} does not exist.")
         return
@@ -133,7 +130,7 @@ def filter_false_positives(input_file, output_file, rate_limit=150):
         return
 
     logger.info(
-        "Filtering out duplicates and false positives with uro and httpx...",
+        "Filtering out duplicates and false positives with httpx...",
         extra={"output_to_file": False},
     )
 
@@ -151,29 +148,15 @@ def filter_false_positives(input_file, output_file, rate_limit=150):
         # output_file,
     ]
 
-    try:
-        # Run `uro` and pipe its output to `httpx`
-        uro_cmd = ["uro", "-i", input_file]
-        logger.debug(f"Running command: {' '.join(uro_cmd)} | {' '.join(httpx_cmd)}")
+    try:        
+        with open(input_file, "r") as f:
+            urls = list(filter(lambda x: bool(x.strip()), [url.strip() for url in f.readlines()]))
+        unique_urls = deduplicate_urls(urls)
 
-        uro_proc = subprocess.Popen(
-            uro_cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True
+        httpx_proc = subprocess.run(
+            httpx_cmd, input="\n".join(unique_urls), capture_output=True, text=True
         )
-        httpx_output = subprocess.run(
-            httpx_cmd, stdin=uro_proc.stdout, capture_output=True, text=True
-        )
-        # Pipe output into jq
-        # jq_output = subprocess.run(
-        #     ["jq", ".final_url"],
-        #     input=httpx_proc.stdout,
-        #     capture_output=True,
-        # )
-        uro_proc.stdout.close()  # Allow `uro_proc` to receive a SIGPIPE if `httpx_proc` exits
-        uro_proc.wait()
-        # filtered_urls = "\n".join([url[1:-1] for url in jq_output.stdout.decode().strip().splitlines()])
-        # with open(output_file, "w") as f:
-        #     f.write(filtered_urls)
-        filtered_urls = httpx_output.stdout.strip().splitlines()
+        filtered_urls = httpx_proc.stdout.strip().splitlines()
         formatted_urls = []
         for url in filtered_urls:
             if " " in url:
@@ -183,12 +166,14 @@ def filter_false_positives(input_file, output_file, rate_limit=150):
                 formatted_urls.append(stripped_second_url)
             else:
                 formatted_urls.append(url)
+        
+        formatted_urls = sorted(formatted_urls)
 
         with open(output_file, "w") as f:
             f.write("\n".join(formatted_urls))
 
     except Exception as e:
-        logger.critical(f"Error running uro and httpx: {e}")
+        logger.critical(f"Error running httpx: {e}")
         raise
 
 
@@ -287,3 +272,39 @@ def match_urls_with_params(input_file, output_file):
 def random_string(length=10):
     """Generates a random string of fixed length consisting of letters"""
     return "".join(random.choice(string.ascii_letters) for _ in range(length))
+
+def deduplicate_urls(urls: list[str]) -> list[str]:
+    """
+    Author: @markfijneman, see https://github.com/markfijneman/scanner/blob/6bdd72f5a243c9f78868d97784b43730f16f5270/utils/utils.py#L112-L144
+
+    Create a list of unique URLs, keeping only one of each URL with the same
+    query parameter combinations.
+
+    :param urls: List of URLs
+
+    :return: List of deduplicated URLs
+    """
+    # Keep track of which query param combinations have been encountered already for specific base urls
+    encountered_query_sets = {}
+    unique_urls = []
+
+    # Extract parameters from URLs.
+    for url in urls:
+        parsed_url = urlparse(url)
+        base_url = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
+
+        # Create set of query param keys
+        query_params = frozenset(parse_qs(parsed_url.query).keys())
+
+        # Check if query param set has been encountered before for this URL
+        if (
+            base_url in encountered_query_sets
+            and query_params in encountered_query_sets[base_url]
+        ):
+            continue
+
+        encountered_query_sets.setdefault(base_url, []).append(query_params)
+
+        unique_urls.append(url)
+
+    return sorted(unique_urls)

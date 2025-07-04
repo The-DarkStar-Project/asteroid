@@ -49,11 +49,6 @@ class GauModule(BaseModule):
                 "httpx is not installed or not in PATH. Please install it before running."
             )
             return False
-        if not shutil.which("uro"):
-            logger.critical(
-                "uro is not installed or not in PATH. Please install it before running."
-            )
-            return False
         return True
 
     def run(self):
