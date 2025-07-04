@@ -23,6 +23,7 @@ Developed during an internship at [SURF](https://www.surf.nl/).
 
 False positives and duplicate URLs are filtered using [httpx](https://github.com/projectdiscovery/httpx) ([MIT](https://github.com/projectdiscovery/httpx/blob/main/LICENSE.md)) and [uro](https://github.com/s0md3v/uro) ([Apache-2;0](https://github.com/s0md3v/uro/blob/main/LICENSE)).
 ## Installation
+To run the Vulnscan module, you should first generate an API key at https://search-vulns.com/api/setup and put it in `config.py`.
 ### Docker
 Build with docker (takes ~8 min):
 ```bash

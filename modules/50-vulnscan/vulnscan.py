@@ -2,6 +2,7 @@ import json
 import os
 import sys
 import shutil
+import requests
 from typing import Optional
 
 # Add the grandparent directory to sys.path
@@ -9,9 +10,110 @@ sys.path.append(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 )
 
-from config import VULNSCAN_OUTPUT_SIZE
+from config import VULNSCAN_OUTPUT_SIZE, SEARCH_VULNS_API_KEY
 from modules.utils import logger, add_argument_if_not_exists, run_command
 from modules.base_module import BaseModule, main
+
+class SearchVulnsAPI:
+    """A class to interact with the search_vulns API."""
+
+    def __init__(self, api_key: str, proxy: Optional[str] = None):
+        """
+        Initializes the SearchVulnsAPI class with the given API key.
+
+        :param api_key: The API key for search_vulns.
+        """
+        self.url = "https://search-vulns.com/api/"
+        self.api_key = api_key
+
+        if proxy:
+            self.proxies = {
+                "http": proxy,
+                "https": proxy,
+            }
+            self.verify = False
+            # disable urllib ssl warnings
+            requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
+        else:
+            self.proxies = None
+            self.verify = True
+
+    def is_updating(self) -> bool:
+        """
+        Checks if the search_vulns database is currently being updated.
+
+        :return: True if the database is updating, False otherwise.
+        """
+        path = "is-updating"
+        r = requests.get(f"{self.url}{path}", proxies=self.proxies, verify=self.verify)
+        status = r.json().get("status")
+        if status != "ok":
+            logger.critical(f"search_vulns API is currently unavailable (status: {status}). Please try again later.")
+            return True
+        return False
+
+    def check_key_status(self) -> bool:
+        """
+        Checks if the API key is valid.
+
+        :return: True if the API key is valid, False otherwise.
+        """
+        path = "check-key-status"
+        body = {"key": "673803cb-21b5-42da-90aa-060704a4ed04"}
+        r = requests.post(
+            f"{self.url}{path}",
+            json=body,
+            proxies=self.proxies,
+            verify=self.verify,
+        )
+        status = r.json().get("status")
+        if status == "valid":
+            return True
+        logger.critical("API key is invalid or expired. Please generate a new API key at: https://search-vulns.com/api/setup")
+        return False
+    
+    def cpe_suggestions(self, query: str):
+        """
+        Gets CPE suggestions for a given query.
+
+        :param query: The query string to search for CPEs.
+        :return: A list of CPE suggestions.
+        """
+        path = "cpe-suggestions"
+        r = requests.get(
+            f"{self.url}{path}?query={requests.utils.quote(query)}",
+            headers={"Api-Key": self.api_key},
+            proxies=self.proxies,
+            verify=self.verify,
+        )
+        return r.json()
+
+    def cpe_suggestion(self, query: str):
+        """
+        Gets a single CPE suggestion for a given query.
+
+        :param query: The query string to search for a CPE.
+        :return: A single CPE suggestion.
+        """
+        res = self.cpe_suggestions(query)
+        return res[0][0]
+
+    def search_vulns(self, query: str, is_good_cpe: bool = False, include_single_version_vulns: bool = True):
+        """
+        Searches for vulnerabilities based on a query.
+
+        :param query: The query string to search for vulnerabilities.
+        :param is_good_cpe: If True, the query is treated as a CPE.
+        :return: A list of vulnerabilities found.
+        """
+        path = "search-vulns"
+        r = requests.get(
+            f"{self.url}{path}?query={requests.utils.quote(query)}&is-good-cpe={str(is_good_cpe).lower()}&include-single-version-vulns={str(include_single_version_vulns).lower()}",
+            headers={"Api-Key": self.api_key},
+            proxies=self.proxies,
+            verify=self.verify, 
+        )
+        return r.json().get(query).get("vulns", {})
 
 
 class VulnscanModule(BaseModule):
@@ -29,8 +131,10 @@ class VulnscanModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
+
+        self.search_vulns_api = SearchVulnsAPI(SEARCH_VULNS_API_KEY, proxy=self.proxy)
+
         self.size: Optional[str] = args["size"]
-        self.update = args["update"]
 
         self.output_file: str = f"{self.output_dir}/vulnscan.txt"
         self.wappalyzer_output_file: str = f"{self.output_dir}/wappalyzer.json"
@@ -43,27 +147,8 @@ class VulnscanModule(BaseModule):
             )
             return False
 
-        if not os.path.exists(f"{self.script_dir}/search_vulns/search_vulns.py"):
-            logger.critical(
-                "search_vulns script is missing. Please ensure it is available."
-            )
+        if self.search_vulns_api.is_updating() or not self.search_vulns_api.check_key_status():
             return False
-
-        if not os.path.exists(f"{self.script_dir}/technologies"):
-            logger.critical(
-                "Technologies directory is missing. Please ensure it is available."
-            )
-            return False
-
-        # Update search_vulns database
-        if self.update:
-            cmd_search_vulns = [
-                "python3",
-                f"{self.script_dir}/search_vulns/search_vulns.py",
-                "-u",
-            ]
-            logger.info("Updating search_vulns database...")
-            run_command(cmd_search_vulns, verbose=self.verbose)
 
         return True
 
@@ -99,66 +184,29 @@ class VulnscanModule(BaseModule):
                 continue
 
             logger.debug("Looking up CPE...")
-            cpe = ""
-            first_letter = tech[0].lower() if tech[0].isalpha() else "_"
-            with open(f"{self.script_dir}/technologies/{first_letter}.json", "r") as f:
-                technologies = json.loads(f.read())
-                if tech in technologies:
-                    if "cpe" in technologies[tech]:
-                        cpe = technologies[tech]["cpe"]
-                        cpe_split = cpe.split(":")
-                        cpe_split[5] = (
-                            data.get("version") if data.get("version") else "*"
-                        )
-                        cpe = ":".join(cpe_split)
-                        logger.debug(f"Found CPE: {cpe}")
+            cpe = self.search_vulns_api.cpe_suggestion(tech + " " + data.get("version", ""))
 
             if cpe:
-                cmd_search_vulns = [
-                    "python3",
-                    f"{self.script_dir}/search_vulns/search_vulns.py",
-                    "-q",
-                    cpe,
-                    "--use-created-cpes",
-                    "-f",
-                    "json",
-                ]
+                vulns = self.search_vulns_api.search_vulns(cpe)
             else:
-                cmd_search_vulns = [
-                    "python3",
-                    f"{self.script_dir}/search_vulns/search_vulns.py",
-                    "-q",
-                    f"{tech} {data.get('version', '')}",
-                    "--use-created-cpes",
-                    "-f",
-                    "json",
-                ]
+                vulns = self.search_vulns_api.search_vulns(f"{tech} {data.get('version', '')}")
 
-            stdout, _ = run_command(cmd_search_vulns, capture_output=True)
-            found_vulns = False
-            if stdout:
-                try:
-                    data = list(json.loads(stdout).values())[0]
-                    if isinstance(data, dict) and "vulns" in data:
-                        vulns = data["vulns"]
-                    else:
-                        vulns = None
-                except json.JSONDecodeError:
-                    logger.error("Failed to decode JSON from stdout.")
-                except Exception as e:
-                    logger.error(f"An error occurred: {e}")
-
-                if vulns:
-                    found_vulns = True
-                    out += f"{len(vulns)} vulnerabilities found for {tech}, showing top {self.size}:\n"
-                    logger.success(
-                        f"{len(vulns)} vulnerabilities found for {tech}, showing top {self.size}:"
+            if vulns:
+                found_vulns = True
+                out += f"{len(vulns)} vulnerabilities found for {tech}, showing top {self.size}:\n"
+                logger.success(
+                    f"{len(vulns)} vulnerabilities found for {tech}, showing top {self.size}:"
+                )
+                vulns_sorted = sorted(
+                    vulns.values(),
+                    key=lambda x: x.get("cvss", 0),
+                    reverse=True,
+                )
+                for vuln in vulns_sorted[: int(self.size)]:
+                    out += f"{vuln.get('id')} - CVSS: {vuln.get('cvss')} - {vuln.get('published')} - {vuln.get('description')}\n"
+                    logger.info(
+                        f"{vuln.get('id')} - CVSS: {vuln.get('cvss')} - {vuln.get('published')} - {vuln.get('description')}"
                     )
-                    for vuln in list(vulns.values())[: int(self.size)]:
-                        out += f"{vuln.get('id')} - CVSS: {vuln.get('cvss')} - {vuln.get('published')} - {vuln.get('description')}\n"
-                        logger.info(
-                            f"{vuln.get('id')} - CVSS: {vuln.get('cvss')} - {vuln.get('published')} - {vuln.get('description')}"
-                        )
 
             if not found_vulns:
                 out += f"No vulnerabilities found for {tech}.\n"
@@ -187,13 +235,6 @@ def add_arguments(parser):
         "--size",
         help="Max number of outputs by search_vulns",
         default=VULNSCAN_OUTPUT_SIZE,
-    )
-    add_argument_if_not_exists(
-        group,
-        "-up",
-        "--update",
-        help="Update search_vulns CVE database",
-        action="store_true",
     )
 
 

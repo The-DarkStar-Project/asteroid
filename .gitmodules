@@ -1,3 +1,0 @@
-[submodule "modules/50-vulnscan/search_vulns"]
-	path = modules/50-vulnscan/search_vulns
-	url = https://github.com/ra1nb0rn/search_vulns.git

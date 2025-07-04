@@ -12,3 +12,6 @@ DEFAULT_ARJUN_WORDLIST = "modules/25-arjun/params.txt"
 DEFAULT_MAX_FILESIZE = "100K"
 DEFAULT_SENSITIVE_FILES_WORDLIST = "modules/35-sensitive-files/sensitive-files.txt"
 VULNSCAN_OUTPUT_SIZE = 5
+
+# Replace with your actual API key, generated from https://search-vulns.com/api/setup
+SEARCH_VULNS_API_KEY = "your-api-key-here"  
