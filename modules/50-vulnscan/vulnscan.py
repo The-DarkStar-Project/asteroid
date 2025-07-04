@@ -182,7 +182,11 @@ def add_arguments(parser):
     """Adds Vulnscan-specific arguments to the main argument parser."""
     group = parser.add_argument_group("vulnscan")
     add_argument_if_not_exists(
-        group, "-s", "--size", help="Max number of outputs by search_vulns", default=VULNSCAN_OUTPUT_SIZE
+        group,
+        "-s",
+        "--size",
+        help="Max number of outputs by search_vulns",
+        default=VULNSCAN_OUTPUT_SIZE,
     )
     add_argument_if_not_exists(
         group,
