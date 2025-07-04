@@ -49,11 +49,11 @@ Now you can run Asteroid using uv:
 uv run asteroid.py
 ```
 ## Usage
-Read the help menu or visit the Wiki (TODO).
+Read the help menu or visit the Wiki.
 ```
-$ uv run asteroid.py -h
-usage: asteroid [-h] [-o OUTPUT] [--modules MODULES] [--skip-modules SKIP_MODULES] [--list-modules] [--rerun] [--continue] [-v] [-rl RATE_LIMIT] [-s SIZE] [-up] [-headless]
-                [-tl TIME_LIMIT] [-H HEADERS] [--proxy PROXY] [--dont-scan DONT_SCAN] [-w WORDLIST] [-d DEPTH] [-C C] [-x EXTENSIONS] [-aw ARJUN_WORDLIST] [--cleanup]
+$ uv run asteroid.py -h                                                                                 
+usage: asteroid [-h] [-o OUTPUT] [--modules MODULES] [--skip-modules SKIP_MODULES] [--list-modules] [--rerun] [--continue] [-v] [-rl RATE_LIMIT] [-p PROXY] [-s SIZE] [-headless] [-tl TIME_LIMIT] [-H HEADERS]
+                [--dont-scan DONT_SCAN] [-w WORDLIST] [-d DEPTH] [-C C] [-x EXTENSIONS] [-aw ARJUN_WORDLIST] [-sfw SENSITIVE_FILES_WORDLIST] [--keep-downloads] [--max-download-size MAX_DOWNLOAD_SIZE]
                 [target]
 
 Runs all Asteroid Web Application Security Scanner modules.
@@ -74,10 +74,11 @@ options:
   -v, --verbose         Enable verbose output
   -rl RATE_LIMIT, --rate-limit RATE_LIMIT
                         Maximum requests to send per second
+  -p PROXY, --proxy PROXY
+                        HTTP proxy to use for the requests, not supported by Vulnscan and RetireJS
 
 vulnscan:
   -s SIZE, --size SIZE  Max number of outputs by search_vulns
-  -up, --update         Update search_vulns CVE database
 
 katana:
   -headless             Run in headless mode in Katana
@@ -85,7 +86,6 @@ katana:
                         Time limit for the Katana scan
   -H HEADERS, --headers HEADERS
                         Headers to use
-  --proxy PROXY         HTTP/SOCKS5 proxy to use for the requests
   --dont-scan DONT_SCAN
                         Do not scan URLs matching this regex
 
@@ -102,8 +102,14 @@ arjun:
   -aw ARJUN_WORDLIST, --arjun-wordlist ARJUN_WORDLIST
                         Wordlist to use for parameter mining
 
+sensitive files:
+  -sfw SENSITIVE_FILES_WORDLIST, --sensitive-files-wordlist SENSITIVE_FILES_WORDLIST
+                        Wordlist to use for Feroxbuster sensitive files scan
+
 trufflehog:
-  --cleanup             Cleanup the output directory
+  --keep-downloads      Do not cleanup the output directory
+  --max-download-size MAX_DOWNLOAD_SIZE
+                        Maximum file size to download, e.g. 5M
 ```
 
 ## Contributing & bug reports
