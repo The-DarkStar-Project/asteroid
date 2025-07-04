@@ -5,7 +5,9 @@ import shutil
 from typing import List, Optional
 
 # Add the grandparent directory to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.append(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 from config import (
     DEFAULT_TIME_LIMIT,
@@ -14,7 +16,12 @@ from config import (
     DEFAULT_FEROXBUSTER_FILTER_STATUS_CODES,
     DEFAULT_FEROXBUSTER_EXTENSIONS,
 )
-from modules.utils import logger, add_argument_if_not_exists, merge_list_with_file, run_command
+from modules.utils import (
+    logger,
+    add_argument_if_not_exists,
+    merge_list_with_file,
+    run_command,
+)
 from modules.base_module import BaseModule, main
 
 

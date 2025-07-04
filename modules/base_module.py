@@ -71,6 +71,7 @@ class BaseModule(ABC):
         """Performs post-processing after the module has run."""
         pass
 
+
 def build_parser(parser, add_arguments):
     """
     Adds common arguments to the parser for all modules.
@@ -78,7 +79,9 @@ def build_parser(parser, add_arguments):
     :param parser: The argument parser to which arguments will be added.
     """
     parser.add_argument("target", help="The target domain")
-    parser.add_argument("-o", "--output", help="Output directory to save results", default=OUTPUT_DIR)
+    parser.add_argument(
+        "-o", "--output", help="Output directory to save results", default=OUTPUT_DIR
+    )
     parser.add_argument(
         "-rl",
         "--rate-limit",
@@ -93,9 +96,12 @@ def build_parser(parser, add_arguments):
 
     return parser
 
+
 def main(name, module_class, add_arguments):
     """Main function to run module as a script."""
-    parser = build_parser(argparse.ArgumentParser(description=f"{name} Module"), add_arguments)
+    parser = build_parser(
+        argparse.ArgumentParser(description=f"{name} Module"), add_arguments
+    )
     args = parser.parse_args()
 
     if not args.target:
@@ -104,7 +110,7 @@ def main(name, module_class, add_arguments):
 
     args = vars(args)
     args["output_dir"] = args["output"]
-    
+
     module = module_class(args)
 
     if not module.pre():

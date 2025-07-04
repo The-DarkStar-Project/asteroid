@@ -9,7 +9,9 @@ from packaging import version as versionLib
 from typing import Dict
 
 # Add the grandparent directory to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.append(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 from modules.utils import logger
 from modules.base_module import BaseModule, main

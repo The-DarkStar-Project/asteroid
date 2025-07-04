@@ -16,7 +16,9 @@ from typing import Optional
 from bs4 import BeautifulSoup as bs
 
 # Add the grandparent directory to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.append(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 from modules.utils import logger, add_argument_if_not_exists, random_string
 from modules.base_module import BaseModule, main

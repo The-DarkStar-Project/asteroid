@@ -5,7 +5,9 @@ import shutil
 from typing import Optional
 
 # Add the grandparent directory to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.append(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 from config import DEFAULT_TIME_LIMIT
 from modules.utils import (
@@ -16,6 +18,7 @@ from modules.utils import (
     filter_false_positives,
 )
 from modules.base_module import BaseModule, main
+
 
 class KatanaModule(BaseModule):
     """A class to encapsulate Katana functionality for crawling domains."""
