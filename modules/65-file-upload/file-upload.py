@@ -5,7 +5,6 @@ https://portswigger.net/web-security/file-upload
 https://book.hacktricks.wiki/en/pentesting-web/file-upload/index.html
 """
 
-import argparse
 import os
 from urllib.parse import urlparse
 import sys
@@ -16,12 +15,11 @@ from requests_ratelimiter import LimiterSession
 from typing import Optional
 from bs4 import BeautifulSoup as bs
 
-# Add the parent directory to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add the grandparent directory to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from constants import DEFAULT_RATE_LIMIT
-from utils import logger, add_argument_if_not_exists, random_string
-from base_module import BaseModule
+from modules.utils import logger, add_argument_if_not_exists, random_string
+from modules.base_module import BaseModule, main
 
 wappalyzer_map = {
     "php": ["php"],
@@ -369,32 +367,4 @@ def add_arguments(parser):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="File Upload Module")
-    parser.add_argument("target", help="The target domain")
-    parser.add_argument("-o", "--output", help="Output directory to save results")
-    parser.add_argument(
-        "-rl",
-        "--rate-limit",
-        help="Maximum requests to send per second",
-        default=DEFAULT_RATE_LIMIT,
-    )
-    parser.add_argument("-p", "--proxy", help="HTTP proxy to use for the requests")
-    add_arguments(parser)
-
-    args = parser.parse_args()
-
-    if not args.target:
-        logger.critical("No target specified. Please provide a target domain.")
-        sys.exit(1)
-
-    file_upload_module = FileUploadModule(args)
-    if not file_upload_module.pre():
-        logger.critical("Preconditions not met. Exiting.")
-        sys.exit(1)
-
-    try:
-        file_upload_module.run()
-        file_upload_module.post()
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-        sys.exit(1)
+    main("FileUpload", FileUploadModule, add_arguments)

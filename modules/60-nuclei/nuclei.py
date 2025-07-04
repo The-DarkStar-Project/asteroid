@@ -1,4 +1,3 @@
-import argparse
 import os
 from urllib.parse import urlparse
 import sys
@@ -8,18 +7,17 @@ import requests
 import shutil
 from typing import Optional
 
-# Add the parent directory to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add the grandparent directory to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from constants import DEFAULT_RATE_LIMIT
-from utils import (
+from modules.utils import (
     logger,
     add_argument_if_not_exists,
     run_command,
     merge_list_with_file,
     match_urls_with_params,
 )
-from base_module import BaseModule
+from modules.base_module import BaseModule, main
 
 
 class NucleiModule(BaseModule):
@@ -361,32 +359,4 @@ def add_arguments(parser):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Nuclei Module")
-    parser.add_argument("target", help="The target domain")
-    parser.add_argument("-o", "--output", help="Output directory to save results")
-    parser.add_argument(
-        "-rl",
-        "--rate-limit",
-        help="Maximum requests to send per second",
-        default=DEFAULT_RATE_LIMIT,
-    )
-    parser.add_argument("-p", "--proxy", help="HTTP proxy to use for the requests")
-    add_arguments(parser)
-
-    args = parser.parse_args()
-
-    if not args.target:
-        logger.critical("No target specified. Please provide a target domain.")
-        sys.exit(1)
-
-    nuclei_module = NucleiModule(args)
-    if not nuclei_module.pre():
-        logger.critical("Preconditions not met. Exiting.")
-        sys.exit(1)
-
-    try:
-        nuclei_module.run()
-        nuclei_module.post()
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-        sys.exit(1)
+    main("Nuclei", NucleiModule, add_arguments)

@@ -16,7 +16,7 @@ from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 import time
 
-from modules.constants import OUTPUT_DIR, DEFAULT_RATE_LIMIT
+from config import OUTPUT_DIR, DEFAULT_RATE_LIMIT
 from modules.logger_config import set_logger
 from modules.utils import logger
 

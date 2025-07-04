@@ -1,20 +1,19 @@
-import argparse
 import os
 import sys
 import re
 from typing import Dict, Pattern
 
-# Add the parent directory to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add the grandparent directory to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from base_module import BaseModule
-from utils import logger
+from modules.base_module import BaseModule, main
+from modules.utils import logger
 
 
 class ExtensionInspectorModule(BaseModule):
     """A class to encapsulate the functionality of the Extension Inspector module."""
 
-    name = "Extension Inspector"
+    name = "ExtensionInspector"
     index = 45
     is_default_module = True
     description = "Inspects found URLs for interesting extensions"
@@ -147,25 +146,4 @@ def add_arguments(parser):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Extension Inspector Module")
-    parser.add_argument("target", help="The target domain")
-    parser.add_argument("-o", "--output", help="Output directory to save results")
-    add_arguments(parser)
-
-    args = parser.parse_args()
-
-    if not args.target:
-        logger.critical("No target specified. Please provide a target domain.")
-        sys.exit(1)
-
-    extension_inspector_module = ExtensionInspectorModule(args)
-    if not extension_inspector_module.pre():
-        logger.critical("Preconditions not met. Exiting.")
-        sys.exit(1)
-
-    try:
-        extension_inspector_module.run()
-        extension_inspector_module.post()
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-        sys.exit(1)
+    main("ExtensionInspector", ExtensionInspectorModule, add_arguments)

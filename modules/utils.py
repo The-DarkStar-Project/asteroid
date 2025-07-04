@@ -4,10 +4,10 @@ import sys
 import random
 import string
 
-# Add current directory to sys.path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Add parent directory to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from logger_config import get_logger
+from modules.logger_config import get_logger
 
 logger = get_logger("main")
 

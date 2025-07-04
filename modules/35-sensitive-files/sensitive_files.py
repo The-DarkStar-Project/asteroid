@@ -1,27 +1,25 @@
-import argparse
 import subprocess
 import os
 import sys
 import shutil
 from typing import Optional
 
-# Add the parent directory to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add the grandparent directory to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from constants import (
-    DEFAULT_RATE_LIMIT,
+from config import (
     DEFAULT_TIME_LIMIT,
     DEFAULT_FEROXBUSTER_FILTER_STATUS_CODES,
     DEFAULT_SENSITIVE_FILES_WORDLIST,
 )
-from utils import logger, add_argument_if_not_exists, merge_list_with_file
-from base_module import BaseModule
+from modules.utils import logger, add_argument_if_not_exists, merge_list_with_file
+from modules.base_module import BaseModule, main
 
 
 class SensitiveFilesModule(BaseModule):
     """A class to encapsulate SensitiveFiles functionality for finding sensitive files."""
 
-    name = "Sensitive Files"
+    name = "SensitiveFiles"
     index = 35
     is_default_module = True
 
@@ -169,31 +167,4 @@ def add_arguments(parser):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Sensitive Files Module")
-    parser.add_argument("target", help="The target domain")
-    parser.add_argument("-o", "--output", help="Output directory to save results")
-    parser.add_argument(
-        "-rl",
-        "--rate-limit",
-        help="Maximum requests to send per second",
-        default=DEFAULT_RATE_LIMIT,
-    )
-    parser.add_argument("-p", "--proxy", help="HTTP proxy to use for the requests")
-    add_arguments(parser)
-    args = parser.parse_args()
-
-    if not args.target:
-        logger.critical("No target specified. Please provide a target domain.")
-        sys.exit(1)
-
-    sensitive_files_module = SensitiveFilesModule(args)
-    if not sensitive_files_module.pre():
-        logger.critical("Preconditions not met. Exiting.")
-        sys.exit(1)
-
-    try:
-        sensitive_files_module.run()
-        sensitive_files_module.post()
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-        sys.exit(1)
+    main("SensitiveFiles", SensitiveFilesModule, add_arguments)

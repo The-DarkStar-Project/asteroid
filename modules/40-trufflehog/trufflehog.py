@@ -1,16 +1,15 @@
-import argparse
 import os
 import sys
 import shutil
 import time
 from typing import Optional
 
-# Add the parent directory to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add the grandparent directory to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from constants import DEFAULT_RATE_LIMIT, DEFAULT_MAX_FILESIZE
-from utils import logger, add_argument_if_not_exists, run_command
-from base_module import BaseModule
+from config import DEFAULT_MAX_FILESIZE
+from modules.utils import logger, add_argument_if_not_exists, run_command
+from modules.base_module import BaseModule, main
 
 
 class TrufflehogModule(BaseModule):
@@ -149,32 +148,4 @@ def add_arguments(parser):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Trufflehog Module")
-    parser.add_argument("target", help="The target domain")
-    parser.add_argument("-o", "--output", help="Output directory to save results")
-    parser.add_argument(
-        "-rl",
-        "--rate-limit",
-        help="Maximum requests to send per second",
-        default=DEFAULT_RATE_LIMIT,
-    )
-    parser.add_argument("-p", "--proxy", help="HTTP proxy to use for the requests")
-    add_arguments(parser)
-
-    args = parser.parse_args()
-
-    if not args.target:
-        logger.critical("No target specified. Please provide a target domain.")
-        sys.exit(1)
-
-    trufflehog_module = TrufflehogModule(args)
-    if not trufflehog_module.pre():
-        logger.critical("Preconditions not met. Exiting.")
-        sys.exit(1)
-
-    try:
-        trufflehog_module.run()
-        trufflehog_module.post()
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-        sys.exit(1)
+    main("Trufflehog", TrufflehogModule, add_arguments)

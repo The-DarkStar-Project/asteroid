@@ -3,10 +3,10 @@ import coloredlogs
 import os
 import sys
 
-# Add current directory to sys.path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Add parent directory to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from constants import OUTPUT_DIR
+from config import OUTPUT_DIR
 
 # set success level
 logging.SUCCESS = 25  # between WARNING and INFO

@@ -1,23 +1,21 @@
-import argparse
 import os
 import json
 import sys
 import shutil
 from typing import Optional
 
-# Add the parent directory to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add the grandparent directory to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from constants import DEFAULT_RATE_LIMIT, DEFAULT_TIME_LIMIT
-from utils import (
+from config import DEFAULT_TIME_LIMIT
+from modules.utils import (
     logger,
     add_argument_if_not_exists,
     merge_files,
     run_command,
     filter_false_positives,
 )
-from base_module import BaseModule
-
+from modules.base_module import BaseModule, main
 
 class KatanaModule(BaseModule):
     """A class to encapsulate Katana functionality for crawling domains."""
@@ -161,32 +159,4 @@ def add_arguments(parser):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Katana Module")
-    parser.add_argument("target", help="The target domain")
-    parser.add_argument("-o", "--output", help="Output directory to save results")
-    parser.add_argument(
-        "-rl",
-        "--rate-limit",
-        help="Maximum requests to send per second",
-        default=DEFAULT_RATE_LIMIT,
-    )
-    parser.add_argument("-p", "--proxy", help="HTTP proxy to use for the requests")
-    add_arguments(parser)
-
-    args = parser.parse_args()
-
-    if not args.target:
-        logger.critical("No target specified. Please provide a target domain.")
-        sys.exit(1)
-
-    katana_module = KatanaModule(args)
-    if not katana_module.pre():
-        logger.critical("Preconditions not met. Exiting.")
-        sys.exit(1)
-
-    try:
-        katana_module.run()
-        katana_module.post()
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-        sys.exit(1)
+    main("Katana", KatanaModule, add_arguments)

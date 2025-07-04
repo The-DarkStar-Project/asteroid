@@ -1,5 +1,4 @@
 # Python 3 adaptation from https://github.com/ghostlulzhacks/RetireJs
-import argparse
 import os
 import sys
 import json
@@ -9,11 +8,11 @@ import re
 from packaging import version as versionLib
 from typing import Dict
 
-# Add the parent directory to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add the grandparent directory to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from utils import logger
-from base_module import BaseModule
+from modules.utils import logger
+from modules.base_module import BaseModule, main
 
 
 class RetireJSModule(BaseModule):
@@ -208,25 +207,4 @@ def add_arguments(parser):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="RetireJS Module")
-    parser.add_argument("target", help="The target domain")
-    parser.add_argument("-o", "--output", help="Output directory to save results")
-    add_arguments(parser)
-
-    args = parser.parse_args()
-
-    if not args.target:
-        logger.critical("No target specified. Please provide a target domain.")
-        sys.exit(1)
-
-    retirejs_module = RetireJSModule(args)
-    if not retirejs_module.pre():
-        logger.critical("Preconditions not met. Exiting.")
-        sys.exit(1)
-
-    try:
-        retirejs_module.run()
-        retirejs_module.post()
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-        sys.exit(1)
+    main("RetireJS", RetireJSModule, add_arguments)

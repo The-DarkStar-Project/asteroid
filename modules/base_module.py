@@ -1,13 +1,14 @@
 from abc import ABC, abstractmethod
+import argparse
 import os
 from urllib.parse import urlparse
 import sys
 from typing import Optional
 
-# Add current directory to sys.path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Add parent directory to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from constants import URLS_FILE, DIRECTORIES_FILE, OUTPUT_DIR
+from config import DEFAULT_RATE_LIMIT, DIRECTORIES_FILE, OUTPUT_DIR, URLS_FILE
 
 
 class BaseModule(ABC):
@@ -69,3 +70,50 @@ class BaseModule(ABC):
     def post(self):
         """Performs post-processing after the module has run."""
         pass
+
+def build_parser(parser, add_arguments):
+    """
+    Adds common arguments to the parser for all modules.
+
+    :param parser: The argument parser to which arguments will be added.
+    """
+    parser.add_argument("target", help="The target domain")
+    parser.add_argument("-o", "--output", help="Output directory to save results", default=OUTPUT_DIR)
+    parser.add_argument(
+        "-rl",
+        "--rate-limit",
+        help="Maximum requests to send per second",
+        default=DEFAULT_RATE_LIMIT,
+    )
+    parser.add_argument("-p", "--proxy", help="HTTP proxy to use for the requests")
+    parser.add_argument(
+        "-v", "--verbose", help="Enable verbose output", action="store_true"
+    )
+    add_arguments(parser)
+
+    return parser
+
+def main(name, module_class, add_arguments):
+    """Main function to run module as a script."""
+    parser = build_parser(argparse.ArgumentParser(description=f"{name} Module"), add_arguments)
+    args = parser.parse_args()
+
+    if not args.target:
+        print("No target specified. Please provide a target domain.")
+        sys.exit(1)
+
+    args = vars(args)
+    args["output_dir"] = args["output"]
+    
+    module = module_class(args)
+
+    if not module.pre():
+        print("Preconditions not met. Exiting.")
+        sys.exit(1)
+
+    try:
+        module.run()
+        module.post()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        sys.exit(1)

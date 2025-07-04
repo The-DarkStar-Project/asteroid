@@ -1,18 +1,17 @@
-import argparse
 import os
 import sys
 
-# Add the parent directory to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add the grandparent directory to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from utils import logger
-from base_module import BaseModule
+from modules.utils import logger
+from modules.base_module import BaseModule, main
 
 
 class DirectoryListingModule(BaseModule):
     """A class to detect Directory Listing from Feroxbuster output."""
 
-    name = "Directory Listing"
+    name = "DirectoryListing"
     index = 30
     is_default_module = True
     description = "Detects directory listings from Feroxbuster output"
@@ -71,24 +70,4 @@ def add_arguments(parser):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Directory Listing Module")
-    parser.add_argument("target", help="The target domain")
-    parser.add_argument("-o", "--output", help="Output directory to save results")
-    add_arguments(parser)
-    args = parser.parse_args()
-
-    if not args.target:
-        logger.critical("No target specified. Please provide a target domain.")
-        sys.exit(1)
-
-    directory_listing_module = DirectoryListingModule(args)
-    if not directory_listing_module.pre():
-        logger.critical("Preconditions not met. Exiting.")
-        sys.exit(1)
-
-    try:
-        directory_listing_module.run()
-        directory_listing_module.post()
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-        sys.exit(1)
+    main("DirectoryListing", DirectoryListingModule, add_arguments)

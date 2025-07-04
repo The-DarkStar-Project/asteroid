@@ -1,15 +1,14 @@
-import argparse
 import json
 import os
 import sys
 import shutil
 from typing import Optional
 
-# Add the parent directory to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add the grandparent directory to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from utils import logger, add_argument_if_not_exists, run_command
-from base_module import BaseModule
+from modules.utils import logger, add_argument_if_not_exists, run_command
+from modules.base_module import BaseModule, main
 
 
 class VulnscanModule(BaseModule):
@@ -192,25 +191,4 @@ def add_arguments(parser):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Vulnscan Module")
-    parser.add_argument("target", help="The target domain")
-    parser.add_argument("-o", "--output", help="Output directory to save results")
-    add_arguments(parser)
-
-    args = parser.parse_args()
-
-    if not args.target:
-        logger.critical("No target specified. Please provide a target domain.")
-        sys.exit(1)
-
-    vulnscan_module = VulnscanModule(args)
-    if not vulnscan_module.pre():
-        logger.critical("Preconditions not met. Exiting.")
-        sys.exit(1)
-
-    try:
-        vulnscan_module.run()
-        vulnscan_module.post()
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-        sys.exit(1)
+    main("Vulnscan", VulnscanModule, add_arguments)
