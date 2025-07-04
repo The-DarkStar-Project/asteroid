@@ -14,4 +14,4 @@ DEFAULT_SENSITIVE_FILES_WORDLIST = "modules/35-sensitive-files/sensitive-files.t
 VULNSCAN_OUTPUT_SIZE = 5
 
 # Replace with your actual API key, generated from https://search-vulns.com/api/setup
-SEARCH_VULNS_API_KEY = "your-api-key-here"  
+SEARCH_VULNS_API_KEY = "your-api-key-here"

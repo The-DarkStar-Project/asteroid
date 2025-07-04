@@ -14,6 +14,7 @@ from config import VULNSCAN_OUTPUT_SIZE, SEARCH_VULNS_API_KEY
 from modules.utils import logger, add_argument_if_not_exists, run_command
 from modules.base_module import BaseModule, main
 
+
 class SearchVulnsAPI:
     """A class to interact with the search_vulns API."""
 
@@ -33,7 +34,9 @@ class SearchVulnsAPI:
             }
             self.verify = False
             # disable urllib ssl warnings
-            requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
+            requests.packages.urllib3.disable_warnings(
+                requests.packages.urllib3.exceptions.InsecureRequestWarning
+            )
         else:
             self.proxies = None
             self.verify = True
@@ -48,7 +51,9 @@ class SearchVulnsAPI:
         r = requests.get(f"{self.url}{path}", proxies=self.proxies, verify=self.verify)
         status = r.json().get("status")
         if status != "ok":
-            logger.critical(f"search_vulns API is currently unavailable (status: {status}). Please try again later.")
+            logger.critical(
+                f"search_vulns API is currently unavailable (status: {status}). Please try again later."
+            )
             return True
         return False
 
@@ -69,9 +74,11 @@ class SearchVulnsAPI:
         status = r.json().get("status")
         if status == "valid":
             return True
-        logger.critical("API key is invalid or expired. Please generate a new API key at: https://search-vulns.com/api/setup")
+        logger.critical(
+            "API key is invalid or expired. Please generate a new API key at: https://search-vulns.com/api/setup"
+        )
         return False
-    
+
     def cpe_suggestions(self, query: str):
         """
         Gets CPE suggestions for a given query.
@@ -98,7 +105,12 @@ class SearchVulnsAPI:
         res = self.cpe_suggestions(query)
         return res[0][0]
 
-    def search_vulns(self, query: str, is_good_cpe: bool = False, include_single_version_vulns: bool = True):
+    def search_vulns(
+        self,
+        query: str,
+        is_good_cpe: bool = False,
+        include_single_version_vulns: bool = True,
+    ):
         """
         Searches for vulnerabilities based on a query.
 
@@ -111,7 +123,7 @@ class SearchVulnsAPI:
             f"{self.url}{path}?query={requests.utils.quote(query)}&is-good-cpe={str(is_good_cpe).lower()}&include-single-version-vulns={str(include_single_version_vulns).lower()}",
             headers={"Api-Key": self.api_key},
             proxies=self.proxies,
-            verify=self.verify, 
+            verify=self.verify,
         )
         return r.json().get(query).get("vulns", {})
 
@@ -147,7 +159,10 @@ class VulnscanModule(BaseModule):
             )
             return False
 
-        if self.search_vulns_api.is_updating() or not self.search_vulns_api.check_key_status():
+        if (
+            self.search_vulns_api.is_updating()
+            or not self.search_vulns_api.check_key_status()
+        ):
             return False
 
         return True
@@ -184,12 +199,16 @@ class VulnscanModule(BaseModule):
                 continue
 
             logger.debug("Looking up CPE...")
-            cpe = self.search_vulns_api.cpe_suggestion(tech + " " + data.get("version", ""))
+            cpe = self.search_vulns_api.cpe_suggestion(
+                tech + " " + data.get("version", "")
+            )
 
             if cpe:
                 vulns = self.search_vulns_api.search_vulns(cpe)
             else:
-                vulns = self.search_vulns_api.search_vulns(f"{tech} {data.get('version', '')}")
+                vulns = self.search_vulns_api.search_vulns(
+                    f"{tech} {data.get('version', '')}"
+                )
 
             if vulns:
                 found_vulns = True
