@@ -9,6 +9,7 @@ sys.path.append(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 )
 
+from config import VULNSCAN_OUTPUT_SIZE
 from modules.utils import logger, add_argument_if_not_exists, run_command
 from modules.base_module import BaseModule, main
 
@@ -181,7 +182,7 @@ def add_arguments(parser):
     """Adds Vulnscan-specific arguments to the main argument parser."""
     group = parser.add_argument_group("vulnscan")
     add_argument_if_not_exists(
-        group, "-s", "--size", help="Max number of outputs by search_vulns", default=5
+        group, "-s", "--size", help="Max number of outputs by search_vulns", default=VULNSCAN_OUTPUT_SIZE
     )
     add_argument_if_not_exists(
         group,

@@ -10,6 +10,7 @@ sys.path.append(
 )
 
 from config import (
+    DEFAULT_DONT_SCAN_REGEX,
     DEFAULT_TIME_LIMIT,
     DEFAULT_FEROXBUSTER_FILTER_STATUS_CODES,
     DEFAULT_SENSITIVE_FILES_WORDLIST,
@@ -164,7 +165,7 @@ def add_arguments(parser):
         group,
         "--dont-scan",
         help="Do not scan URLs matching this regex",
-        default=".*(logout|uitloggen).*",
+        default=DEFAULT_DONT_SCAN_REGEX,
     )
 
 

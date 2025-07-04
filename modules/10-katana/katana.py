@@ -9,7 +9,7 @@ sys.path.append(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 )
 
-from config import DEFAULT_TIME_LIMIT
+from config import DEFAULT_TIME_LIMIT, DEFAULT_DONT_SCAN_REGEX
 from modules.utils import (
     logger,
     add_argument_if_not_exists,
@@ -157,7 +157,7 @@ def add_arguments(parser):
         group,
         "--dont-scan",
         help="Do not scan URLs matching this regex",
-        default=".*(logout|uitloggen).*",
+        default=DEFAULT_DONT_SCAN_REGEX,
     )
 
 
