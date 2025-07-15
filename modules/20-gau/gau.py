@@ -35,7 +35,9 @@ class GauModule(BaseModule):
         super().__init__(args)
 
         self.output_file: str = os.path.join(self.output_dir, "gau.txt")
-        self.output_filtered_file: str = os.path.join(self.output_dir, "gau-filtered.txt")
+        self.output_filtered_file: str = os.path.join(
+            self.output_dir, "gau-filtered.txt"
+        )
 
     def pre(self) -> bool:
         """Checks preconditions before running Gau."""

@@ -1,8 +1,10 @@
+import json
 import os
 import sys
 import shutil
 import time
 from typing import Optional
+from urllib.parse import quote, unquote
 
 # Add the grandparent directory to sys.path
 sys.path.append(
@@ -11,7 +13,7 @@ sys.path.append(
 
 from config import DEFAULT_MAX_FILESIZE
 from modules.utils import logger, add_argument_if_not_exists, run_command
-from modules.base_module import BaseModule, main
+from modules.base_module import BaseModule, main, Vuln
 
 
 class TrufflehogModule(BaseModule):
@@ -69,7 +71,7 @@ class TrufflehogModule(BaseModule):
             for url in f.readlines():
                 url = url.strip()
                 if url:
-                    filename = url.replace("/", "_").replace(":", "_")
+                    filename = quote(url, safe="")
                     output_path = os.path.join(trufflehog_output_dir, filename)
                     cmd_curl = [
                         "curl",
@@ -103,11 +105,7 @@ class TrufflehogModule(BaseModule):
                 time.sleep(1 / int(self.rate_limit))  # Rate limit the requests
 
         # Run Trufflehog on the downloaded files
-        cmd_trufflehog = [
-            "trufflehog",
-            "filesystem",
-            trufflehog_output_dir,
-        ]
+        cmd_trufflehog = ["trufflehog", "filesystem", trufflehog_output_dir, "--json"]
         with open(self.output_file, "w") as output_file:
             run_command(cmd_trufflehog, verbose=self.verbose, stdout=output_file)
 
@@ -126,7 +124,25 @@ class TrufflehogModule(BaseModule):
             if lines:
                 logger.success("Trufflehog results:")
                 for line in lines:
-                    logger.info(line.strip())
+                    dic = json.loads(line.strip())
+                    path = unquote(
+                        dic["SourceMetadata"]["Data"]["Filesystem"]["file"].split("/")[
+                            -1
+                        ]
+                    )
+                    logger.info(
+                        f"URL: {path}\nDetector: {dic['DetectorName']}\nRaw: {dic['Raw']}\n"
+                    )
+                    vuln = Vuln(
+                        title=f"Sensitive Data Found: {dic['DetectorName']}",
+                        affected_item=path,
+                        confidence=50,
+                        severity="high",
+                        host=self.target,
+                        summary=f"Trufflehog detected sensitive data: {dic['Raw']}",
+                    )
+                    self.add_vulnerability(vuln)
+                logger.debug(f"Vulnerabilities added to {self.json_file}")
             else:
                 logger.info("No sensitive data found by Trufflehog.")
 

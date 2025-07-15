@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import argparse
+import json
 import os
 from urllib.parse import urlparse
 import sys
@@ -8,7 +9,93 @@ from typing import Optional
 # Add parent directory to sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from config import DEFAULT_RATE_LIMIT, DIRECTORIES_FILE, OUTPUT_DIR, URLS_FILE
+from config import (
+    DEFAULT_RATE_LIMIT,
+    DIRECTORIES_FILE,
+    OUTPUT_DIR,
+    URLS_FILE,
+    JSON_FILE,
+)
+
+
+class Vuln:
+    """Class representing a vulnerability."""
+
+    def __init__(
+        self,
+        title,
+        affected_item,
+        confidence,
+        host,
+        tool="Asteroid",
+        cve_number="",
+        summary="",
+        impact="",
+        solution="",
+        poc="",
+        references="",
+        epss=None,
+        cvss=None,
+        severity="unknown",
+        cwe="",
+        capec="",
+    ):
+        self.title = title
+        self.affected_item = affected_item
+        self.tool = tool
+        self.confidence = confidence
+        self.severity = severity
+        self.host = host
+
+        self.cve = cve_number
+        self.summary = summary
+        self.impact = impact
+        self.solution = solution
+        self.poc = poc
+        self.references = references
+        self.epss = epss
+        self.cvss = cvss
+        self.cwe = cwe
+        self.capec = capec
+
+        if self.cvss and self.severity == "unknown":
+            self.severity = self.get_severity_from_cvss()
+
+    def to_dict(self):
+        """Convert the vulnerability to a dictionary."""
+        return {
+            "title": self.title,
+            "affected_item": self.affected_item,
+            "tool": self.tool,
+            "confidence": self.confidence,
+            "severity": self.severity,
+            "host": self.host,
+            "cve": getattr(self, "cve", None),
+            "summary": self.summary,
+            "impact": self.impact,
+            "solution": self.solution,
+            "poc": self.poc,
+            "references": self.references,
+            "epss": self.epss,
+            "cvss": self.cvss,
+            "cwe": self.cwe,
+            "capec": self.capec,
+        }
+
+    def get_severity_from_cvss(self):
+        """Get severity based on CVSS score."""
+        if self.cvss is None:
+            return "unknown"
+        if self.cvss >= 9.0:
+            return "critical"
+        elif self.cvss >= 7.0:
+            return "high"
+        elif self.cvss >= 4.0:
+            return "medium"
+        elif self.cvss >= 0.1:
+            return "low"
+        else:
+            return "info"
 
 
 class BaseModule(ABC):
@@ -35,24 +122,25 @@ class BaseModule(ABC):
         self.output_dir = args["output_dir"]
         if not self.output_dir:
             self.output_dir = OUTPUT_DIR
-        
+
         self.target_name = urlparse(self.target).netloc
-        
+
         if self.target_name:
             self.base_output_dir = os.path.join(self.output_dir, self.target_name)
         else:
             self.base_output_dir = self.output_dir
 
-        named_dir = str(self.index) + '-' + self.name.lower()
+        named_dir = str(self.index) + "-" + self.name.lower()
         self.output_dir = os.path.join(self.base_output_dir, named_dir)
 
         self.verbose = args["verbose"]
-        
+
         self.script_dir = os.path.dirname(
             sys.modules[self.__class__.__module__].__file__
         )
         self.urls_file = os.path.join(self.base_output_dir, URLS_FILE)
         self.directories_file = os.path.join(self.base_output_dir, DIRECTORIES_FILE)
+        self.json_file = os.path.join(self.base_output_dir, JSON_FILE)
 
         self.rate_limit: Optional[str] = args["rate_limit"]
         self.proxy: Optional[str] = args["proxy"]
@@ -79,6 +167,28 @@ class BaseModule(ABC):
     def post(self):
         """Performs post-processing after the module has run."""
         pass
+
+    def add_vulnerability(self, vuln: Vuln):
+        """Adds a vulnerability to the JSON file."""
+        if not os.path.exists(self.json_file):
+            with open(self.json_file, "w") as f:
+                json.dump([], f, indent=4)
+
+        with open(self.json_file, "r") as f:
+            vulns = json.load(f)
+
+        # Check if the vulnerability already exists
+        for existing_vuln in vulns:
+            if (
+                existing_vuln.get("title") == vuln.title
+                and existing_vuln.get("affected_item") == vuln.affected_item
+                and existing_vuln.get("host") == vuln.host
+            ):
+                return
+        vulns.append(vuln.to_dict())
+
+        with open(self.json_file, "w") as f:
+            json.dump(vulns, f, indent=4)
 
 
 def build_parser(parser, add_arguments):

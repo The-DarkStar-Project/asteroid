@@ -92,7 +92,9 @@ def merge_files(file1, file2, output_file):
         os.remove(output_file)
 
     with open(output_file, "w") as f_out:
-        f_out.write("\n".join(deduplicate_urls(list(filter(lambda x: bool(x.strip()), lines)))))
+        f_out.write(
+            "\n".join(deduplicate_urls(list(filter(lambda x: bool(x.strip()), lines))))
+        )
 
 
 def merge_list_with_file(list_to_merge, file_to_merge, output_file):
@@ -116,7 +118,9 @@ def merge_list_with_file(list_to_merge, file_to_merge, output_file):
         os.remove(output_file)
 
     with open(output_file, "w") as f_out:
-        f_out.write("\n".join(deduplicate_urls(list(filter(lambda x: bool(x.strip()), lines)))))
+        f_out.write(
+            "\n".join(deduplicate_urls(list(filter(lambda x: bool(x.strip()), lines))))
+        )
 
 
 def filter_false_positives(input_file, output_file, rate_limit=150):
@@ -148,9 +152,13 @@ def filter_false_positives(input_file, output_file, rate_limit=150):
         # output_file,
     ]
 
-    try:        
+    try:
         with open(input_file, "r") as f:
-            urls = list(filter(lambda x: bool(x.strip()), [url.strip() for url in f.readlines()]))
+            urls = list(
+                filter(
+                    lambda x: bool(x.strip()), [url.strip() for url in f.readlines()]
+                )
+            )
         unique_urls = deduplicate_urls(urls)
 
         httpx_proc = subprocess.run(
@@ -166,7 +174,7 @@ def filter_false_positives(input_file, output_file, rate_limit=150):
                 formatted_urls.append(stripped_second_url)
             else:
                 formatted_urls.append(url)
-        
+
         formatted_urls = sorted(formatted_urls)
 
         with open(output_file, "w") as f:
@@ -272,6 +280,7 @@ def match_urls_with_params(input_file, output_file):
 def random_string(length=10):
     """Generates a random string of fixed length consisting of letters"""
     return "".join(random.choice(string.ascii_letters) for _ in range(length))
+
 
 def deduplicate_urls(urls: list[str]) -> list[str]:
     """

@@ -42,7 +42,9 @@ class KatanaModule(BaseModule):
 
         self.output_file: str = os.path.join(self.output_dir, "katana.jsonl")
         self.output_urls_file: str = os.path.join(self.output_dir, "katana-urls.txt")
-        self.output_filtered_file: str = os.path.join(self.output_dir, "katana-filtered.txt")
+        self.output_filtered_file: str = os.path.join(
+            self.output_dir, "katana-filtered.txt"
+        )
 
     def pre(self) -> bool:
         """Checks if katana is installed and if target is given"""

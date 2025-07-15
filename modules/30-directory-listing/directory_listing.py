@@ -7,7 +7,7 @@ sys.path.append(
 )
 
 from modules.utils import logger
-from modules.base_module import BaseModule, main
+from modules.base_module import BaseModule, main, Vuln
 
 
 class DirectoryListingModule(BaseModule):
@@ -25,8 +25,12 @@ class DirectoryListingModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.feroxbuster_output_file: str = os.path.join(os.path.join(self.base_output_dir, "15-feroxbuster"),"feroxbuster.txt")
+        self.feroxbuster_output_file: str = os.path.join(
+            os.path.join(self.base_output_dir, "15-feroxbuster"), "feroxbuster.txt"
+        )
         self.output_file: str = os.path.join(self.output_dir, "directory-listings.txt")
+
+        self.directory_listings = set()
 
     def pre(self) -> bool:
         """Checks preconditions before running Feroxbuster."""
@@ -43,28 +47,37 @@ class DirectoryListingModule(BaseModule):
         with open(self.feroxbuster_output_file, "r") as f:
             lines = f.readlines()
 
-        directory_listings = set()
         for line in lines:
             if "heuristics detected directory listing" in line:
-                directory_listings.add(
+                self.directory_listings.add(
                     line.split(" ")[-2]
                     + ("/" if line.split(" ")[-2][-1] != "/" else "")
                 )
-        directory_listings = sorted(directory_listings)
+        self.directory_listings = sorted(self.directory_listings)
 
-        if directory_listings:
-            logger.success(f"Found {len(directory_listings)} directory listings:")
-            for listing in directory_listings:
+    def post(self):
+        if self.directory_listings:
+            logger.success(f"Found {len(self.directory_listings)} directory listings:")
+            for listing in self.directory_listings:
                 logger.info(listing)
         else:
             logger.info("No directory listings found.")
 
         with open(self.output_file, "w") as f:
-            for listing in directory_listings:
+            for listing in self.directory_listings:
                 f.write(listing + "\n")
 
-    def post(self):
-        pass
+        for directory in self.directory_listings:
+            vuln = Vuln(
+                title="Directory Listing",
+                affected_item=directory,
+                confidence=100,
+                severity="low",
+                host=self.target,
+                summary=f"There is an open directory listing at {directory}. This can lead to information disclosure.",
+            )
+            self.add_vulnerability(vuln)
+        logger.debug(f"Vulnerabilities added to {self.json_file}")
 
 
 def add_arguments(parser):

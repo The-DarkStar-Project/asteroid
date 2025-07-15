@@ -21,7 +21,7 @@ sys.path.append(
 )
 
 from modules.utils import logger, add_argument_if_not_exists, random_string
-from modules.base_module import BaseModule, main
+from modules.base_module import BaseModule, main, Vuln
 
 wappalyzer_map = {
     "php": ["php"],
@@ -354,6 +354,17 @@ class FileUploadModule(BaseModule):
                                                 output_file.write(
                                                     f"Response:\n{resp.text}"
                                                 )
+
+                                            vuln = Vuln(
+                                                title="File upload vulnerability",
+                                                affected_item=target_url,
+                                                confidence=30,
+                                                severity="High",
+                                                host=self.target,
+                                                summary=f"File upload vulnerability found at {target_url} with content type {content_type} and payload (b64): {base64.b64encode(payload).decode()}",
+                                            )
+                                            self.add_vulnerability(vuln)
+
                                             early_exit = True
 
                 if not early_exit:
