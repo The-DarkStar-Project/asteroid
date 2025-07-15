@@ -101,7 +101,7 @@ class ExtensionInspectorModule(BaseModule):
             ),
         }
 
-        self.output_file: str = f"{self.output_dir}/extension-inspector.txt"
+        self.output_file: str = os.path.join(self.output_dir, "extension-inspector.txt")
 
     def pre(self) -> bool:
         """Preconditions for running the module."""

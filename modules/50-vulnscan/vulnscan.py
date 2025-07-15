@@ -148,8 +148,8 @@ class VulnscanModule(BaseModule):
 
         self.size: Optional[str] = args.get("size", VULNSCAN_OUTPUT_SIZE)
 
-        self.output_file: str = f"{self.output_dir}/vulnscan.txt"
-        self.wappalyzer_output_file: str = f"{self.output_dir}/wappalyzer.json"
+        self.output_file: str = os.path.join(self.output_dir, "vulnscan.txt")
+        self.wappalyzer_output_file: str = os.path.join(self.output_dir, "wappalyzer.json")
 
     def pre(self) -> bool:
         """Checks preconditions before running Vulnscan."""

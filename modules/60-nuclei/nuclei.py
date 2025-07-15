@@ -42,19 +42,19 @@ class NucleiModule(BaseModule):
 
         self.run_on_forms: bool = True
 
-        self.katana_output_file: str = f"{self.output_dir}/katana.jsonl"
-        self.forms_output_file: str = f"{self.output_dir}/forms.xml"
+        self.katana_output_file: str = os.path.join(self.output_dir, "katana.jsonl")
+        self.forms_output_file: str = os.path.join(self.output_dir, "forms.xml")
 
-        self.urls_with_params: str = f"{self.output_dir}/urls-with-params.txt"
+        self.urls_with_params: str = os.path.join(self.output_dir, "urls-with-params.txt")
 
-        self.output_file: str = f"{self.output_dir}/nuclei.txt"
-        self.output_file_urls: str = f"{self.output_dir}/nuclei-urls.txt"
-        self.output_file_forms: str = f"{self.output_dir}/nuclei-forms.txt"  # TODO: better name? see forms_output_file
-        self.output_file_ssl: str = f"{self.output_dir}/nuclei-ssl.txt"
-        self.output_file_headers: str = f"{self.output_dir}/nuclei-headers.txt"
-        self.output_file_cookies: str = f"{self.output_dir}/nuclei-cookies.txt"
-        self.output_file_file_uploads: str = (
-            f"{self.output_dir}/nuclei-file-uploads.txt"
+        self.output_file: str = os.path.join(self.output_dir, "nuclei.txt")
+        self.output_file_urls: str = os.path.join(self.output_dir, "nuclei-urls.txt")
+        self.output_file_forms: str = os.path.join(self.output_dir, "nuclei-forms.txt")  # TODO: better name? see forms_output_file
+        self.output_file_ssl: str = os.path.join(self.output_dir, "nuclei-ssl.txt")
+        self.output_file_headers: str = os.path.join(self.output_dir, "nuclei-headers.txt")
+        self.output_file_cookies: str = os.path.join(self.output_dir, "nuclei-cookies.txt")
+        self.output_file_file_uploads: str = os.path.join(
+            self.output_dir, "nuclei-file-uploads.txt"
         )
 
     def convert_to_xml(self, jsonl_file: str, output_file: str):

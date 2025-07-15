@@ -187,10 +187,10 @@ class FileUploadModule(BaseModule):
 
         self.success_codes = [200, 201, 202, 204, 301, 302, 303, 307, 308]
 
-        self.input_file: str = f"{self.output_dir}/nuclei-file-uploads.txt"
-        self.wappalyzer_file: str = f"{self.output_dir}/wappalyzer.json"
+        self.input_file: str = os.path.join(self.output_dir, "nuclei-file-uploads.txt")
+        self.wappalyzer_file: str = os.path.join(self.output_dir, "wappalyzer.json")
 
-        self.output_file: str = f"{self.output_dir}/file-uploads.txt"
+        self.output_file: str = os.path.join(self.output_dir, "file-uploads.txt")
 
     def pre(self) -> bool:
         """Checks preconditions before running the module."""

@@ -40,9 +40,9 @@ class KatanaModule(BaseModule):
         self.headers: Optional[str] = args.get("headers")
         self.dont_scan: Optional[str] = args.get("dont_scan", DEFAULT_DONT_SCAN_REGEX)
 
-        self.output_file: str = f"{self.output_dir}/katana.jsonl"
-        self.output_urls_file: str = f"{self.output_dir}/katana-urls.txt"
-        self.output_filtered_file: str = f"{self.output_dir}/katana-filtered.txt"
+        self.output_file: str = os.path.join(self.output_dir, "katana.jsonl")
+        self.output_urls_file: str = os.path.join(self.output_dir, "katana-urls.txt")
+        self.output_filtered_file: str = os.path.join(self.output_dir, "katana-filtered.txt")
 
     def pre(self) -> bool:
         """Checks if katana is installed and if target is given"""

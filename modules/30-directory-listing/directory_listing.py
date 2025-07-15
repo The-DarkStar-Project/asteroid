@@ -25,8 +25,8 @@ class DirectoryListingModule(BaseModule):
         :param args: The command line arguments passed to the script.
         """
         super().__init__(args)
-        self.feroxbuster_output_file: str = f"{self.output_dir}/feroxbuster.txt"
-        self.output_file: str = f"{self.output_dir}/directory-listings.txt"
+        self.feroxbuster_output_file: str = os.path.join(os.path.join(self.base_output_dir, "15-feroxbuster"),"feroxbuster.txt")
+        self.output_file: str = os.path.join(self.output_dir, "directory-listings.txt")
 
     def pre(self) -> bool:
         """Checks preconditions before running Feroxbuster."""

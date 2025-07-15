@@ -34,16 +34,25 @@ class BaseModule(ABC):
 
         self.output_dir = args["output_dir"]
         if not self.output_dir:
-            self.output_dir = os.path.join(OUTPUT_DIR, urlparse(self.target).netloc)
+            self.output_dir = OUTPUT_DIR
+        
+        self.target_name = urlparse(self.target).netloc
+        
+        if self.target_name:
+            self.base_output_dir = os.path.join(self.output_dir, self.target_name)
+        else:
+            self.base_output_dir = self.output_dir
+
+        named_dir = str(self.index) + '-' + self.name.lower()
+        self.output_dir = os.path.join(self.base_output_dir, named_dir)
 
         self.verbose = args["verbose"]
-
-        self.target_name = urlparse(self.target).netloc
+        
         self.script_dir = os.path.dirname(
             sys.modules[self.__class__.__module__].__file__
         )
-        self.urls_file = os.path.join(self.output_dir, URLS_FILE)
-        self.directories_file = os.path.join(self.output_dir, DIRECTORIES_FILE)
+        self.urls_file = os.path.join(self.base_output_dir, URLS_FILE)
+        self.directories_file = os.path.join(self.base_output_dir, DIRECTORIES_FILE)
 
         self.rate_limit: Optional[str] = args["rate_limit"]
         self.proxy: Optional[str] = args["proxy"]

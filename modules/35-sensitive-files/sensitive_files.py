@@ -41,7 +41,7 @@ class SensitiveFilesModule(BaseModule):
         )
         self.dont_scan: Optional[str] = args.get("dont_scan", DEFAULT_DONT_SCAN_REGEX)
 
-        self.output_file: str = f"{self.output_dir}/sensitive-files.txt"
+        self.output_file: str = os.path.join(self.output_dir, "sensitive-files.txt")
 
     def pre(self) -> bool:
         """Checks preconditions before running Sensitive Files fuzzer."""

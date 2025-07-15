@@ -35,7 +35,7 @@ class TrufflehogModule(BaseModule):
             "max_download_size", DEFAULT_MAX_FILESIZE
         )
 
-        self.output_file: str = f"{self.output_dir}/trufflehog.txt"
+        self.output_file: str = os.path.join(self.output_dir, "trufflehog.txt")
 
     def pre(self) -> bool:
         """Checks if the necessary conditions are met before running the module."""

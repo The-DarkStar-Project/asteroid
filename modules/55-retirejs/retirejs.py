@@ -33,8 +33,8 @@ class RetireJSModule(BaseModule):
         """
         super().__init__(args)
 
-        self.js_repository_path: str = f"{self.script_dir}/jsrepository.json"
-        self.output_file: str = f"{self.output_dir}/retirejs.txt"
+        self.js_repository_path: str = os.path.join(self.script_dir, "jsrepository.json")
+        self.output_file: str = os.path.join(self.output_dir, "retirejs.txt")
 
         self.update_url = "https://raw.githubusercontent.com/RetireJS/retire.js/refs/heads/master/repository/jsrepository.json"
 
