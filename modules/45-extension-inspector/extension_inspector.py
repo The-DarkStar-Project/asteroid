@@ -8,7 +8,7 @@ sys.path.append(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 )
 
-from modules.base_module import BaseModule, main
+from modules.base_module import BaseModule, main, Vuln
 from modules.utils import logger
 
 
@@ -101,7 +101,7 @@ class ExtensionInspectorModule(BaseModule):
             ),
         }
 
-        self.output_file: str = f"{self.output_dir}/extension-inspector.txt"
+        self.output_file: str = os.path.join(self.output_dir, "extension-inspector.txt")
 
     def pre(self) -> bool:
         """Preconditions for running the module."""
@@ -130,6 +130,15 @@ class ExtensionInspectorModule(BaseModule):
                 out += f"{name}:\n"
                 for match in results[name]:
                     out += f"    {match}\n"
+                    vuln = Vuln(
+                        title=f"Interesting Extension Found: {name}",
+                        affected_item=match,
+                        confidence=100,
+                        severity="medium",
+                        host=self.target,
+                        summary=f"Found interesting extension of {name} in URL: {match}",
+                    )
+                    self.add_vulnerability(vuln)
                 out += "\n"
             logger.info(out)
         else:

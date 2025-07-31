@@ -37,8 +37,10 @@ class ArjunModule(BaseModule):
         self.headers: Optional[str] = args.get("headers")
         self.arjun_wordlist: str = args.get("arjun_wordlist", DEFAULT_ARJUN_WORDLIST)
 
-        self.urls_non_static_file: str = f"{self.output_dir}/urls-non-static.txt"
-        self.output_file: str = f"{self.output_dir}/arjun.txt"
+        self.urls_non_static_file: str = os.path.join(
+            self.output_dir, "urls-non-static.txt"
+        )
+        self.output_file: str = os.path.join(self.output_dir, "arjun.txt")
 
     def pre(self) -> bool:
         """Checks preconditions before running Arjun."""
