@@ -53,7 +53,7 @@ class FeroxbusterModule(BaseModule):
         self.headers: Optional[str] = args.get("headers")
         self.dont_scan: Optional[str] = args.get("dont_scan", DEFAULT_DONT_SCAN_REGEX)
 
-        self.output_file: str = f"{self.output_dir}/feroxbuster.txt"
+        self.output_file: str = os.path.join(self.output_dir, "feroxbuster.txt")
 
     def pre(self) -> bool:
         """Checks if Feroxbuster is installed and prepares the environment for Feroxbuster."""

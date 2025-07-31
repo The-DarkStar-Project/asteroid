@@ -14,7 +14,7 @@ sys.path.append(
 )
 
 from modules.utils import logger
-from modules.base_module import BaseModule, main
+from modules.base_module import BaseModule, main, Vuln
 
 
 class RetireJSModule(BaseModule):
@@ -33,8 +33,10 @@ class RetireJSModule(BaseModule):
         """
         super().__init__(args)
 
-        self.js_repository_path: str = f"{self.script_dir}/jsrepository.json"
-        self.output_file: str = f"{self.output_dir}/retirejs.txt"
+        self.js_repository_path: str = os.path.join(
+            self.script_dir, "jsrepository.json"
+        )
+        self.output_file: str = os.path.join(self.output_dir, "retirejs.txt")
 
         self.update_url = "https://raw.githubusercontent.com/RetireJS/retire.js/refs/heads/master/repository/jsrepository.json"
 
@@ -196,6 +198,16 @@ class RetireJSModule(BaseModule):
                     vuln = json.loads(vuln)
                     out = f"{vuln['name']} - {vuln['version']}\n{vuln['vulnerabilities']}\n{vuln['url']}\n{vuln['CVE']}\n"
                     logger.info(out)
+                    vuln_obj = Vuln(
+                        title=f"RetireJS Vulnerability: {vuln['CVE']} in {vuln['name']} {vuln['version']}",
+                        affected_item=vuln["url"],
+                        confidence=100,
+                        severity="high",
+                        host=vuln["domain"],
+                        summary=f"Found vulnerability in {vuln['name']} version {vuln['version']}: {vuln['vulnerabilities']}",
+                        cve_number=vuln["CVE"],
+                    )
+                    self.add_vulnerability(vuln_obj)
                     f.write(out + "\n")
         else:
             logger.info("No vulnerabilities found with RetireJS.")

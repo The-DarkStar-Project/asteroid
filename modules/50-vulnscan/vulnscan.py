@@ -12,7 +12,7 @@ sys.path.append(
 
 from config import VULNSCAN_OUTPUT_SIZE, SEARCH_VULNS_API_KEY
 from modules.utils import logger, add_argument_if_not_exists, run_command
-from modules.base_module import BaseModule, main
+from modules.base_module import BaseModule, main, Vuln
 
 
 class SearchVulnsAPI:
@@ -148,8 +148,10 @@ class VulnscanModule(BaseModule):
 
         self.size: Optional[str] = args.get("size", VULNSCAN_OUTPUT_SIZE)
 
-        self.output_file: str = f"{self.output_dir}/vulnscan.txt"
-        self.wappalyzer_output_file: str = f"{self.output_dir}/wappalyzer.json"
+        self.output_file: str = os.path.join(self.output_dir, "vulnscan.txt")
+        self.wappalyzer_output_file: str = os.path.join(
+            self.output_dir, "wappalyzer.json"
+        )
 
     def pre(self) -> bool:
         """Checks preconditions before running Vulnscan."""
@@ -226,6 +228,19 @@ class VulnscanModule(BaseModule):
                     logger.info(
                         f"{vuln.get('id')} - CVSS: {vuln.get('cvss')} - {vuln.get('published')} - {vuln.get('description')}"
                     )
+                for vuln in vulns_sorted:
+                    vuln = Vuln(
+                        title=vuln.get("id"),
+                        affected_item=f"{tech} - version {version}",
+                        confidence=50,
+                        host=self.target,
+                        summary=vuln.get("description"),
+                        cve_number=vuln.get("id"),
+                        cvss=float(vuln.get("cvss")),
+                        poc=",".join(vuln.get("exploits", "")),
+                        references=vuln.get("href", ""),
+                    )
+                    self.add_vulnerability(vuln)
 
             if not found_vulns:
                 out += f"No vulnerabilities found for {tech}.\n"

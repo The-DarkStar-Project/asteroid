@@ -1,6 +1,7 @@
 OUTPUT_DIR = "asteroid_output"
 URLS_FILE = "urls.txt"
 DIRECTORIES_FILE = "directories.txt"
+JSON_FILE = "vulns.json"
 DEFAULT_DONT_SCAN_REGEX = ".*(logout|uitloggen).*"
 DEFAULT_RATE_LIMIT = "150"
 DEFAULT_TIME_LIMIT = "2m"

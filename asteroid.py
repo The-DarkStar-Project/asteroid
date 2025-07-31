@@ -230,12 +230,12 @@ class Asteroid:
             ):
                 target_name = urlparse(single_target).netloc
                 if target_name:
-                    self.output_dir = os.path.join(self.output_dir, target_name)
+                    self.base_output_dir = os.path.join(self.output_dir, target_name)
 
                 if self.verbose:
-                    set_logger(logger, outputdir=self.output_dir, level="DEBUG")
+                    set_logger(logger, outputdir=self.base_output_dir, level="DEBUG")
                 else:
-                    set_logger(logger, outputdir=self.output_dir)
+                    set_logger(logger, outputdir=self.base_output_dir)
 
                 logger.info(f"[SCANNING TARGET: {single_target}]")
 

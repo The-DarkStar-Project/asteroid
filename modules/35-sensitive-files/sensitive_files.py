@@ -16,7 +16,7 @@ from config import (
     DEFAULT_SENSITIVE_FILES_WORDLIST,
 )
 from modules.utils import logger, add_argument_if_not_exists, merge_list_with_file
-from modules.base_module import BaseModule, main
+from modules.base_module import BaseModule, main, Vuln
 
 
 class SensitiveFilesModule(BaseModule):
@@ -41,7 +41,7 @@ class SensitiveFilesModule(BaseModule):
         )
         self.dont_scan: Optional[str] = args.get("dont_scan", DEFAULT_DONT_SCAN_REGEX)
 
-        self.output_file: str = f"{self.output_dir}/sensitive-files.txt"
+        self.output_file: str = os.path.join(self.output_dir, "sensitive-files.txt")
 
     def pre(self) -> bool:
         """Checks preconditions before running Sensitive Files fuzzer."""
@@ -134,6 +134,19 @@ class SensitiveFilesModule(BaseModule):
             # Merge the results into the URLs file
             merge_list_with_file(sensitive_paths, self.urls_file, self.urls_file)
             logger.info(f"Sensitive files successfully merged into {self.urls_file}")
+
+            for path in sensitive_paths:
+                vuln = Vuln(
+                    title="Potential Sensitive File",
+                    affected_item=path,
+                    confidence=40,
+                    severity="unknown",
+                    host=self.target,
+                    summary=f"There is a potential sensitive file at {path}. This can lead to information disclosure.",
+                )
+                self.add_vulnerability(vuln)
+            logger.debug(f"Vulnerabilities added to {self.json_file}")
+
         except FileNotFoundError:
             logger.error(f"Output file {self.output_file} not found.")
         except Exception as e:
