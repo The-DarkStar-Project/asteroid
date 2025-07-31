@@ -40,7 +40,7 @@ class NucleiModule(BaseModule):
 
         self.headers: Optional[str] = args.get("headers")
 
-        self.run_on_forms: bool = True
+        self.run_on_forms: bool = args.get("forms", False)
 
         self.katana_output_file: str = os.path.join(
             os.path.join(self.base_output_dir, "10-katana"), "katana.jsonl"
@@ -168,16 +168,19 @@ class NucleiModule(BaseModule):
             )
             return False
 
-        if not os.path.exists(self.katana_output_file):
-            logger.warning(
-                f"Katana output file {self.katana_output_file} does not exist, continuing without forms"
-            )
-            self.run_on_forms = False
+        if self.run_on_forms:
+            if not os.path.exists(self.katana_output_file):
+                logger.warning(
+                    f"Katana output file {self.katana_output_file} does not exist, continuing without forms"
+                )
+                self.run_on_forms = False
+            else:
+                logger.info(
+                    f"Converting Katana output to XML format: {self.forms_output_file}"
+                )
+                self.convert_to_xml(self.katana_output_file, self.forms_output_file)
         else:
-            logger.info(
-                f"Converting Katana output to XML format: {self.forms_output_file}"
-            )
-            self.convert_to_xml(self.katana_output_file, self.forms_output_file)
+            logger.info("Skipping form fuzzing as --forms is not set.")
 
         # Filter out non-dynamic URLs from the URLs file
         match_urls_with_params(self.urls_file, self.urls_with_params)
@@ -380,6 +383,12 @@ def add_arguments(parser):
     """Adds Nuclei-specific arguments to the main argument parser."""
     group = parser.add_argument_group("nuclei")
     add_argument_if_not_exists(group, "-H", "--headers", help="Headers to use")
+    add_argument_if_not_exists(
+        group,
+        "--forms",
+        action="store_true",
+        help="Run Nuclei on forms extracted by Katana",
+    )
 
 
 if __name__ == "__main__":
