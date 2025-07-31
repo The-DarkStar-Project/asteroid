@@ -86,7 +86,7 @@ class SearchVulnsAPI:
         :param query: The query string to search for CPEs.
         :return: A list of CPE suggestions.
         """
-        path = "cpe-suggestions"
+        path = "product-id-suggestions"
         r = requests.get(
             f"{self.url}{path}?query={requests.utils.quote(query)}",
             headers={"Api-Key": self.api_key},
@@ -103,7 +103,7 @@ class SearchVulnsAPI:
         :return: A single CPE suggestion.
         """
         res = self.cpe_suggestions(query)
-        return res[0][0]
+        return res["cpe"][0][0]
 
     def search_vulns(
         self,
@@ -125,7 +125,7 @@ class SearchVulnsAPI:
             proxies=self.proxies,
             verify=self.verify,
         )
-        return r.json().get(query).get("vulns", {})
+        return r.json().get("vulns", {})
 
 
 class VulnscanModule(BaseModule):
@@ -144,7 +144,7 @@ class VulnscanModule(BaseModule):
         """
         super().__init__(args)
 
-        self.search_vulns_api = SearchVulnsAPI(SEARCH_VULNS_API_KEY, proxy=self.proxy)
+        self.search_vulns_api = SearchVulnsAPI(args.get("search_vulns_api_key", SEARCH_VULNS_API_KEY), proxy=self.proxy)
 
         self.size: Optional[str] = args.get("size", VULNSCAN_OUTPUT_SIZE)
 
@@ -212,6 +212,7 @@ class VulnscanModule(BaseModule):
                     f"{tech} {data.get('version', '')}"
                 )
 
+            found_vulns = False
             if vulns:
                 found_vulns = True
                 out += f"{len(vulns)} vulnerabilities found for {tech}, showing top {self.size}:\n"
@@ -269,6 +270,12 @@ def add_arguments(parser):
         "--size",
         help="Max number of outputs by search_vulns",
         default=VULNSCAN_OUTPUT_SIZE,
+    )
+    add_argument_if_not_exists(
+        group,
+        "--search-vulns-api-key",
+        help="API key for search_vulns (default: from config.py)",
+        default=SEARCH_VULNS_API_KEY,
     )
 
 
