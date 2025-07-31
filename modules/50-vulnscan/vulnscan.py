@@ -64,7 +64,7 @@ class SearchVulnsAPI:
         :return: True if the API key is valid, False otherwise.
         """
         path = "check-key-status"
-        body = {"key": "673803cb-21b5-42da-90aa-060704a4ed04"}
+        body = {"key": self.api_key}
         r = requests.post(
             f"{self.url}{path}",
             json=body,
