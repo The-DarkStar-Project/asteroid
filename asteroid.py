@@ -190,7 +190,7 @@ class Asteroid:
 
         if not self.target:
             logger.critical("Please provide a target")
-            raise ValueError("Target is required")
+            sys.exit(1)
         if os.path.isfile(self.target):
             with open(self.target, "r") as f:
                 list_of_targets = [line.strip() for line in f if line.strip()]
@@ -231,6 +231,8 @@ class Asteroid:
                 target_name = urlparse(single_target).netloc
                 if target_name:
                     self.base_output_dir = os.path.join(self.output_dir, target_name)
+                else:
+                    self.base_output_dir = self.output_dir
 
                 if self.verbose:
                     set_logger(logger, outputdir=self.base_output_dir, level="DEBUG")
