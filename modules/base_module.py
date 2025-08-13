@@ -70,7 +70,7 @@ class Vuln:
             "confidence": self.confidence,
             "severity": self.severity,
             "host": self.host,
-            "cve": getattr(self, "cve", None),
+            "cve_number": getattr(self, "cve", None),
             "summary": self.summary,
             "impact": self.impact,
             "solution": self.solution,
