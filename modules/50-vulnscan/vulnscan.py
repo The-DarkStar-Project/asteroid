@@ -230,7 +230,7 @@ class VulnscanModule(BaseModule):
                         f"{vuln.get('id')} - CVSS: {vuln.get('cvss')} - {vuln.get('published')} - {vuln.get('description')}"
                     )
                 for vuln in vulns_sorted:
-                    vuln = Vuln(
+                    vuln_obj = Vuln(
                         title=vuln.get("id"),
                         affected_item=f"{tech} - version {version}",
                         confidence=50,
@@ -241,7 +241,7 @@ class VulnscanModule(BaseModule):
                         poc=",".join(vuln.get("exploits", "")),
                         references=vuln.get("href", ""),
                     )
-                    self.add_vulnerability(vuln)
+                    self.add_vulnerability(vuln_obj)
 
             if not found_vulns:
                 out += f"No vulnerabilities found for {tech}.\n"

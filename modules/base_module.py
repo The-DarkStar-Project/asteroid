@@ -47,7 +47,7 @@ class Vuln:
         self.severity = severity
         self.host = host
 
-        self.cve = cve_number
+        self.cve_number = cve_number
         self.summary = summary
         self.impact = impact
         self.solution = solution
@@ -70,7 +70,7 @@ class Vuln:
             "confidence": self.confidence,
             "severity": self.severity,
             "host": self.host,
-            "cve_number": getattr(self, "cve", None),
+            "cve_number": self.cve_number,
             "summary": self.summary,
             "impact": self.impact,
             "solution": self.solution,
