@@ -15,6 +15,12 @@ from modules.utils import logger, add_argument_if_not_exists, run_command
 from modules.base_module import BaseModule, main, Vuln
 
 
+def _has_real_api_key(api_key: str | None) -> bool:
+    """Return true only for a configured non-placeholder search-vulns API key."""
+    clean_key = (api_key or "").strip()
+    return bool(clean_key and clean_key != "your-api-key-here")
+
+
 class SearchVulnsAPI:
     """A class to interact with the search_vulns API."""
 
@@ -159,6 +165,10 @@ class VulnscanModule(BaseModule):
             logger.critical(
                 "Wappalyzer is not installed or not in PATH. Please install it before running."
             )
+            return False
+
+        if not _has_real_api_key(self.search_vulns_api.api_key):
+            logger.info("Skipping Vulnscan: SEARCH_VULNS_API_KEY is not configured")
             return False
 
         if (

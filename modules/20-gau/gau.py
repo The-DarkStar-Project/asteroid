@@ -1,6 +1,7 @@
 import os
 import sys
 import shutil
+from urllib.parse import urlparse
 
 # Add the grandparent directory to sys.path
 sys.path.append(
@@ -14,6 +15,13 @@ from modules.utils import (
     filter_false_positives,
 )
 from modules.base_module import BaseModule, main
+
+
+def _same_target_host(url: str, target: str) -> bool:
+    """Keep passive URL output scoped to the requested target host."""
+    url_host = urlparse(url).hostname or ""
+    target_host = urlparse(target).hostname or target
+    return url_host == target_host or url_host.endswith(f".{target_host}")
 
 
 class GauModule(BaseModule):
@@ -78,13 +86,21 @@ class GauModule(BaseModule):
 
         # Print filtered results
         with open(self.output_filtered_file, "r") as f:
-            filtered_urls = [url.strip() for url in f.readlines()]
-            if filtered_urls:
-                logger.success(f"Found {len(filtered_urls)} (filtered) URLs with Gau:")
-                for url in filtered_urls:
-                    logger.info(url)
-            else:
-                logger.info("No URLs found with Gau.")
+            filtered_urls = [
+                url.strip()
+                for url in f.readlines()
+                if url.strip() and _same_target_host(url.strip(), self.target)
+            ]
+        with open(self.output_filtered_file, "w") as f:
+            f.write("\n".join(filtered_urls))
+        if filtered_urls:
+            logger.success(f"Found {len(filtered_urls)} in-scope URLs with Gau:")
+            for url in filtered_urls[:20]:
+                logger.info(url)
+            if len(filtered_urls) > 20:
+                logger.info(f"... {len(filtered_urls) - 20} more URLs omitted from live log")
+        else:
+            logger.info("No in-scope URLs found with Gau.")
 
         # Merge the filtered results with the URLs file
         merge_files(self.output_filtered_file, self.urls_file, self.urls_file)

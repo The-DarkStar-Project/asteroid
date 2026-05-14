@@ -22,6 +22,14 @@ from modules.utils import (
 from modules.base_module import BaseModule, main, Vuln
 
 
+NUCLEI_TEMPLATES_DIR = os.getenv("NUCLEI_TEMPLATES_DIR", "/root/nuclei-templates")
+
+
+def _template_path(*parts: str) -> str:
+    """Return an absolute Nuclei template path when the template repo exists."""
+    return os.path.join(NUCLEI_TEMPLATES_DIR, *parts)
+
+
 class NucleiModule(BaseModule):
     """A class to encapsulate Nuclei functionality for DAST vulnerability scanning."""
 
@@ -168,6 +176,12 @@ class NucleiModule(BaseModule):
             )
             return False
 
+        if not os.path.isdir(NUCLEI_TEMPLATES_DIR):
+            logger.warning(
+                f"Nuclei template repository not found at {NUCLEI_TEMPLATES_DIR}; skipping module."
+            )
+            return False
+
         if self.run_on_forms:
             if not os.path.exists(self.katana_output_file):
                 logger.warning(
@@ -238,7 +252,7 @@ class NucleiModule(BaseModule):
             "-rl",
             self.rate_limit,
             "-t",
-            "ssl",
+            _template_path("ssl"),
             "-o",
             self.output_file_ssl,
         ]
@@ -258,7 +272,7 @@ class NucleiModule(BaseModule):
             "-o",
             self.output_file_headers,
             "-t",
-            "http/misconfiguration/http-missing-security-headers.yaml",
+            _template_path("http", "misconfiguration", "http-missing-security-headers.yaml"),
         ]
         if self.headers:
             cmd_nuclei_headers.extend(["-H", self.headers])
@@ -276,11 +290,11 @@ class NucleiModule(BaseModule):
             "-o",
             self.output_file_cookies,
             "-t",
-            "http/misconfiguration/cookies-without-httponly.yaml",
+            _template_path("http", "misconfiguration", "cookies-without-httponly.yaml"),
             "-t",
-            "http/misconfiguration/cookies-without-secure.yaml",
+            _template_path("http", "misconfiguration", "cookies-without-secure.yaml"),
             "-t",
-            "custom-templates/cookies",
+            f"{self.script_dir}/custom-templates/cookies",
         ]
         logger.debug("Skipping headers for cookies check")
         # if self.headers:
