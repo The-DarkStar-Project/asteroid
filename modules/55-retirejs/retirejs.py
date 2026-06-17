@@ -77,14 +77,13 @@ class RetireJSModule(BaseModule):
 
     def retire_js(self):
         """Scans a website for vulnerable JavaScript files."""
-        requests.packages.urllib3.disable_warnings()  # Disable SSL warnings
         foundvulns = []
         dataJson = self.openJSONFile()
         scanDomain = self.target
 
         if not self.target.startswith("http"):
             try:
-                r = requests.get(f"https://{self.target}", timeout=5, verify=False)
+                r = requests.get(f"https://{self.target}", timeout=5)
             except requests.RequestException:
                 try:
                     r = requests.get(f"http://{self.target}", timeout=5)
@@ -128,7 +127,7 @@ class RetireJSModule(BaseModule):
         foundvulns = []
         vreg = r"[0-9][0-9.a-z_\\-]+"
         try:
-            r = requests.get(url, timeout=25, verify=False)
+            r = requests.get(url, timeout=25)
         except requests.RequestException as e:
             logger.error(f"Failed to retrieve JavaScript file {url}: {e}")
             return
